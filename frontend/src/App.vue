@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import TopBar from '@/components/TopBar.vue';
 </script>
 
 <template>
-  <!--div class="bg-light-gray w-full h-full">
-    <RouterView/>
-  </div-->
+  <TopBar />
   <RouterView />
 </template>
