@@ -44,7 +44,6 @@ function closeModals(): void {
 
 <template>
   <div>
-    <h1> Toimii</h1>
     <div class="ml-10 flex flex-col">
       <div class="flex flex-row gap-10">
         <h1 class="text-brand-primary text-bold text-lg">Luetut kirjat</h1>
