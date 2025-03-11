@@ -4,6 +4,7 @@ import { ref } from "vue"
 import Button from "@/components/basics/Button.vue"
 import NewBookModal from "@/components/NewBookModal.vue"
 import type { Entry } from "@/models/entry"
+import IconPlus from "./icons/IconPlus.vue"
 
 
 const exampleItems: Entry[] =
@@ -46,26 +47,21 @@ function closeModals(): void {
     <div class="ml-10 flex flex-col">
       <div class="flex flex-row gap-10">
         <h1 class="text-brand-primary text-bold text-lg">Luetut kirjat</h1>
-        <Button :onClick="openNewEntryDialog" :display="buttonDisplay"></Button>
+        <Button hidden :onClick="openNewEntryDialog" :display="buttonDisplay"></Button>
       </div>
 
-      <table class="text-left">
-        <thead>
-          <tr>
-            <th>Nimi</th>
-            <th>Kirjailija</th>
-            <th>Kääntäjä</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(entry, index) in items" :key="index">
-            <td> {{ entry.name }}</td>
-            <td> {{ entry.author }}</td>
-            <td> {{ entry.translator ?? "" }}</td>
-          </tr>
-
-        </tbody>
-      </table>
+      <div class="flex gap-4 mt-6">
+        <div class="bg-brand-primary w-30 rounded ">
+          <button class="w-full h-full flex justify-center cursor-pointer" :onClick="openNewEntryDialog">
+            <IconPlus class="w-20 text-white"></IconPlus>
+          </button>
+        </div>
+        <div v-for="entry in items" :key="entry.name" class="flex flex-col bg-white shadow-lg rounded p-10">
+          <p>{{ entry.name }}</p>
+          <p> {{ entry.author }}</p>
+          <p> {{ entry.translator }}</p>
+        </div>
+      </div>
 
     </div>
     <NewBookModal :is-modal-open="showDialog" :onSubmit="addNewEntry" :onClose="closeModals" />
