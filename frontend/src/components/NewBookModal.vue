@@ -3,6 +3,7 @@ import Modal from '@/components/basics/Modal.vue';
 import type { Book } from '@/models/entry';
 import Button from '@/components/basics/Button.vue';
 import { ref } from 'vue'
+import TextInput from "@/components/basics/TextInput.vue"
 
 interface Props {
   isModalOpen: boolean
@@ -39,20 +40,11 @@ function submitModal(): void {
 <template>
   <Modal :show-modal="isModalOpen">
     <form>
-      <div class="flex flex-col gap-4">
-        <div>
-          <label for="bookName">Kirjan nimi</label>
-          <input type="text" required name="bookName" v-model="newBook.name" />
-        </div>
-        <div>
-          <label for="author">Kirjailija</label>
-          <input type="text" required name="author" v-model="newBook.author" />
-        </div>
-        <div>
-          <label for="translator">Kääntäjä</label>
-          <input type="text" name="translator" v-model="newBook.translator" />
-        </div>
-        <div>
+      <div class="flex flex-col gap-4 p-4">
+        <TextInput name="name" label="Nimi" :required="true" v-model="newBook.name" />
+        <TextInput name="author" label="Kirjailija" :required="true" v-model="newBook.author" />
+        <TextInput name="translator" label="Kääntäjä" :required="true" v-model="newBook.translator" />
+        <div class="flex flex-row justify-between py-2">
           <Button :onClick="closeModal"> {{ "Peru" }}</Button>
           <Button :onClick="submitModal"> {{ "Lisää" }}</Button>
         </div>
