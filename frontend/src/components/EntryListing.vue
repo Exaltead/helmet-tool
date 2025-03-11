@@ -2,7 +2,6 @@
 
 import { ref } from "vue"
 import Button from "@/components/basics/Button.vue"
-import Modal from "./basics/Modal.vue"
 import NewBookModal from "@/components/NewBookModal.vue"
 import type { Entry } from "@/models/entry"
 

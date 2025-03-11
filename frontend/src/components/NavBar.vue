@@ -9,7 +9,7 @@ const links = ref([
 const navOpen = ref(false)
 
 const navClassName = computed<string>(() => {
-  return navOpen.value ? "left-0" : "left-[-100%]"
+  return navOpen.value ? "md:block" : "hidden md:block"
 })
 
 function toggleNavOpen() {
@@ -21,16 +21,17 @@ function toggleNavOpen() {
 
 <template>
   <div class=" md:flex bg-brand-primary p-2 md:flex justify-between">
-    <div class="md:hidden" >
-      <button @click="toggleNavOpen" class="cursor-pointer">
+    <div class=" flex flex-row gap-6">
+      <button @click="toggleNavOpen" class="cursor-pointer md:hidden">
         <IconMenu class="w-6 text-white" />
       </button>
+      <h1 class="font-bold text-white">Lukuhaaste</h1>
     </div>
 
-    <div>
-      <ul class="md:flex md:items-center md:gap-4 md:static absolute md:w-auto w-full bg-brand-primary"
-        :class="navClassName">
-        <li v-for="link in links" :key="link"> {{ link }}</li>
+
+    <div class="left-0 md:static absolute md:w-auto bg-brand-primary w-full" :class="navClassName">
+      <ul class="md:flex md:items-center md:gap-4 ">
+        <li class="text-white" v-for="link in links" :key="link"> {{ link }}</li>
       </ul>
     </div>
 
