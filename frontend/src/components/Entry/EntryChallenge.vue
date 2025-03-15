@@ -29,7 +29,7 @@ const questions: Question[] = [
 const answers = ref<string[]>(questions.map(() => "no"))
 
 function makeRadioStyle(checked: boolean) {
-  const adds = checked ? 'bg-brand-primary text-white' : 'border-xxs border-brand-primary'
+  const adds = checked ? 'bg-brand-primary text-white' : 'border border-brand-primary'
 
   return "rounded flex items-center w-full justify-center h-full p-1" + " " + adds
 }
@@ -40,16 +40,17 @@ function makeRadioStyle(checked: boolean) {
   <div>
     <h1>Haaste kysymykset</h1>
 
-    <div v-for="(question, index) in questions" :key="index" class="bg-light-gray">
-      <RadioGroup v-model="answers[index]">
+    <div v-for="(question, index) in questions" :key="index" class="bg-light-gray p-2">
+      <RadioGroup v-model="answers[index]" class="flex flex-col gap-1">
         <RadioGroupLabel>{{ question.question }}</RadioGroupLabel>
-        <div class="flex flex-row gap-4 pl-8">
-          <RadioGroupOption v-slot="{ checked }" class="min-w-12 flex" value="yes">
-            <span :class="makeRadioStyle(checked)">Kyllä</span>
-          </RadioGroupOption>
+        <div class="flex flex-row gap-12 pl-8 justify-end pr-4">
           <RadioGroupOption value="no" v-slot="{ checked }" class="min-w-12 flex">
             <span :class="makeRadioStyle(checked)">Ei</span>
           </RadioGroupOption>
+          <RadioGroupOption v-slot="{ checked }" class="min-w-12 flex" value="yes">
+            <span :class="makeRadioStyle(checked)">Kyllä</span>
+          </RadioGroupOption>
+
 
         </div>
 

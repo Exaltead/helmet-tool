@@ -6,7 +6,7 @@ import EntryChallenge from '@/components/Entry/EntryChallenge.vue';
 
 <template>
   <main>
-    <div class="px-10 py-10 flex flex-col gap-10">
+    <div class="px-4 md:px-10 py-10 flex flex-col gap-10">
 
       <EntryBasics />
       <EntryChallenge />
