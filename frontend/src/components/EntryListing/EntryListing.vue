@@ -54,12 +54,7 @@ function closeModals(): void {
   selectedEntry.value = undefined
   showDialog.value = false
 }
-function editEntry(entry: Entry): void {
-  console.log("For edit", entry)
 
-  selectedEntry.value = entry
-  showDialog.value = true
-}
 
 </script>
 
