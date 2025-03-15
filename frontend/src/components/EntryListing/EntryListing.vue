@@ -24,7 +24,6 @@ const exampleItems: Entry[] =
     }
   ]
 
-const buttonDisplay = "Uusi kirja"
 const selectedEntry = ref<Entry | undefined>(undefined)
 
 const items = ref(exampleItems)
@@ -68,10 +67,10 @@ function editEntry(entry: Entry): void {
     <div class="ml-10 flex flex-col">
       <div class="flex flex-row gap-10">
         <h1 class="text-brand-primary text-bold text-lg">Luetut kirjat</h1>
-        <Button hidden :onClick="openNewEntryDialog" :display="buttonDisplay"></Button>
+        <Button hidden :onClick="openNewEntryDialog" display="Uusi kirja"></Button>
       </div>
 
-      <div class="flex gap-4 mt-6">
+      <div class="flex gap-4 mt-6 flex-wrap">
         <div class="bg-brand-primary w-30 rounded">
           <button class="w-full h-full flex justify-center cursor-pointer" :onClick="openNewEntryDialog">
             <IconPlus class="w-20 text-white"></IconPlus>
