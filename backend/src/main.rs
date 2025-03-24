@@ -1,7 +1,5 @@
 use axum::{routing::get, Router};
-use lambda_http::{run, service_fn, tracing, Error};
-mod http_handler;
-use http_handler::function_handler;
+use lambda_http::{run, tracing, Error};
 mod challenge_routes;
 use challenge_routes::get_questions;
 
