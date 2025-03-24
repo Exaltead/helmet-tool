@@ -1,48 +1,24 @@
 <script setup lang="ts">
-import { questionSchema, type Question } from "@/models/question";
+import { fetchQuestions } from "@/api/questionsApi";
+import { type Question } from "@/models/question";
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from "@headlessui/vue"
 import { computed, ref } from "vue";
 
-/*type Question = {
-  questionId: number;
-  question: string;
-
-}
-
-
-
-const questions: Question[] = [
-  {
-    question: "Oliko kirja hyvä?",
-    questionId: 1
-  },
-  {
-    question: "Kuinka monta tähteä annat kirjalle?",
-    questionId: 2
-  },
-  {
-    question: "Suosittelisitko kirjaa?",
-    questionId: 3
-  }
-
-]*/
 
 
 const questions = ref<Question[]>([])
 
-fetchQuestions()
+getQuestions()
 
-const answers = computed(() => questions.value.map(() => "no")) //ref<string[]>(questions.map(() => "no"))
-
+const answers = computed(() => questions.value.map(() => "no"))
 function makeRadioStyle(checked: boolean) {
   const adds = checked ? 'bg-brand-primary text-white' : 'border border-brand-primary'
 
   return "rounded flex items-center w-full justify-center h-full p-1" + " " + adds
 }
 
-async function fetchQuestions() {
-  const resp = await fetch("http://localhost:9000/challenge-questions?year=2025&question_set=book")
-  const data = questionSchema.array().parse(await resp.json())
+async function getQuestions() {
+  const data = await fetchQuestions()
 
   questions.value = data
 }
