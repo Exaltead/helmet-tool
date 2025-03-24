@@ -37,3 +37,13 @@ npm run build
 ```sh
 npm run lint
 ```
+
+
+To deply
+
+```
+npm run build
+aws s3 sync dist s3://helmet-tool-bucket --delete
+```
+
+Still need to update the amplify hosting
