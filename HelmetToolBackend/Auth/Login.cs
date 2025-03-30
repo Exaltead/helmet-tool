@@ -49,8 +49,9 @@ namespace HelmetToolBackend.Auth
 
             var validLogin = await _authClient.ValidLogin(loginRequest.Username, loginRequest.Password);
 
-            if (!validLogin)
+            if (validLogin == null)
             {
+                _logger.LogWarning("Invalid login attempt for user {Username}.", loginRequest.Username);
                 return new UnauthorizedResult();
             }
 

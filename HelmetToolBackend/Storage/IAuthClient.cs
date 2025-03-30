@@ -1,7 +1,10 @@
 namespace HelmetToolBackend.Storage
 {
+
+    public record User(string Id, string Username);
+
     public interface IAuthClient
     {
-        Task<bool> ValidLogin(string username, string password);
+        Task<User?> ValidLogin(string username, string password);
     }
 }
