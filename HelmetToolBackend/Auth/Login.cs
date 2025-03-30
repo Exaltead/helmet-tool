@@ -1,4 +1,5 @@
 
+using HelmetToolBackend.Storage;
 using HelmetToolBackend.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,12 @@ namespace HelmetToolBackend.Auth
     public class Login
     {
         private readonly ILogger _logger;
+        private readonly IAuthClient _authClient;
 
-        public Login(ILoggerFactory loggerFactory)
+        public Login(ILoggerFactory loggerFactory, IAuthClient authClient)
         {
             _logger = loggerFactory.CreateLogger<Login>();
+            _authClient = authClient;
         }
 
         [Function("login")]
@@ -42,6 +45,13 @@ namespace HelmetToolBackend.Auth
             if (string.IsNullOrEmpty(loginRequest.Username) || string.IsNullOrEmpty(loginRequest.Password))
             {
                 return new BadRequestObjectResult("Username and password are required.");
+            }
+
+            var validLogin = await _authClient.ValidLogin(loginRequest.Username, loginRequest.Password);
+
+            if (!validLogin)
+            {
+                return new UnauthorizedResult();
             }
 
             var auth = new AuthResponse("KekkosToken");
