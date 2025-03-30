@@ -1,10 +1,24 @@
-using System.Net;
+
+using HelmetToolBackend.Utils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
+
 using Microsoft.Extensions.Logging;
 
 namespace HelmetToolBackend.Auth
 {
+    internal class LoginRequest
+    {
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+    }
+
+    internal class AuthResponse(string token)
+    {
+        public string Token { get; } = token;
+    }
+
     public class Login
     {
         private readonly ILogger _logger;
@@ -15,18 +29,24 @@ namespace HelmetToolBackend.Auth
         }
 
         [Function("login")]
-        public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
         {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
+            _logger.LogInformation("User tried to login.");
 
-            var body
+            var loginRequest = await req.GetBody<LoginRequest>();
+            if (loginRequest == null)
+            {
+                return new BadRequestObjectResult("Invalid request body.");
+            }
 
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+            if (string.IsNullOrEmpty(loginRequest.Username) || string.IsNullOrEmpty(loginRequest.Password))
+            {
+                return new BadRequestObjectResult("Username and password are required.");
+            }
 
-            response.WriteString("Welcome to Azure Functions!");
+            var auth = new AuthResponse("KekkosToken");
 
-            return response;
+            return new OkObjectResult(auth);
         }
     }
 }
