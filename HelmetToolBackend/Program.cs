@@ -1,3 +1,4 @@
+using HelmetToolBackend.Auth;
 using HelmetToolBackend.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ var host = new HostBuilder()
     {
         // Register your services here
         services.AddSingleton<IAuthClient, AuthClient>();
+        services.AddSingleton<IJwtHandler, JwtHandler>();
     })
     .Build();
 

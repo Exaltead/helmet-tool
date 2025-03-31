@@ -20,16 +20,11 @@ namespace HelmetToolBackend.Auth
         public string Token { get; } = token;
     }
 
-    public class Login
+    public class Login(ILoggerFactory loggerFactory, IAuthClient authClient, IJwtHandler jwtHandler)
     {
-        private readonly ILogger _logger;
-        private readonly IAuthClient _authClient;
-
-        public Login(ILoggerFactory loggerFactory, IAuthClient authClient)
-        {
-            _logger = loggerFactory.CreateLogger<Login>();
-            _authClient = authClient;
-        }
+        private readonly ILogger _logger = loggerFactory.CreateLogger<Login>();
+        private readonly IAuthClient _authClient = authClient;
+        private readonly IJwtHandler _jwtHandler = jwtHandler;
 
         [Function("login")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
@@ -55,9 +50,12 @@ namespace HelmetToolBackend.Auth
                 return new UnauthorizedResult();
             }
 
-            var auth = new AuthResponse("KekkosToken");
+            var token = _jwtHandler.SignUserToken(validLogin);
+
+            var auth = new AuthResponse(token);
 
             return new OkObjectResult(auth);
         }
+
     }
 }
