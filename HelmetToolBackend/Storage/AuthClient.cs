@@ -1,12 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
+
 namespace HelmetToolBackend.Storage
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.Azure.Cosmos;
-    using Microsoft.Extensions.Logging;
+
 
     internal record UserWithPassword(string Id, string Username, string PasswordHash);
 
@@ -41,8 +44,9 @@ namespace HelmetToolBackend.Storage
             }
 
             var user = results.First();
-            // TODO: Hash the password and compare it with the stored hash
-            if (user.PasswordHash != password)
+            var passwordHash = getSha256Hash(password);
+
+            if (user.PasswordHash != passwordHash)
             {
                 _logger.LogWarning("Invalid password for user {Username}.", username);
                 return null;
@@ -52,6 +56,11 @@ namespace HelmetToolBackend.Storage
             return new User(user.Id, user.Username);
         }
 
-
+        private string getSha256Hash(string password)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+            var hash = SHA256.HashData(bytes);
+            return Convert.ToBase64String(hash);
+        }
     }
 }
