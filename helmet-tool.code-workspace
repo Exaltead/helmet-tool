@@ -4,8 +4,10 @@
 			"path": "frontend"
 		},
 		{
-			"path": "backend"
+			"path": "HelmetToolBackend"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"debug.internalConsoleOptions": "neverOpen"
+	}
 }
