@@ -1,49 +1,32 @@
-# frontend
+# Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+A vue app for site created to make answering and managing helmet reading challenges easier. Hosting is easiest done by uploading to azure blob storage and enabling static website hosting.
 
-## Recommended IDE Setup
+## Required tools
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+* Node
 
-## Type Support for `.vue` Imports in TS
+## Setup
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+Run the following commands
 
 ```sh
-npm install
+npm run install
 ```
 
-### Compile and Hot-Reload for Development
+To start a development server
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## Deployment instructions for frontend
+
+Copy .env to .env.production and set API url to where your API is hosted. Build dist and upload to blob storage where static website hosting is enabled. Example commands given below.
+
+Requires AzCopy locally installed. [See instructions at time of writing](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10?tabs=dnf)
 
 ```sh
 npm run build
+az storage blob sync -c \$web --account-name mystorageccount -s dist
 ```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
-
-
-To deply
-
-```
-npm run build
-aws s3 sync dist s3://helmet-tool-bucket --delete
-```
-
-Still need to update the amplify hosting
