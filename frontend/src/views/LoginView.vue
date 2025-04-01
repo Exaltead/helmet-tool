@@ -10,13 +10,19 @@ const router = useRouter()
 const userName = ref<string>("")
 const password = ref<string>("")
 
+const loggingIn = ref(false)
+
 const invalidLogin = computed(() => {
   return userName.value.length === 0 || password.value.length === 0
 })
 
+
+
 async function doLogin() {
+  loggingIn.value = true
   const token = await postLogin(userName.value, password.value)
-  if(token) {
+  loggingIn.value = false
+  if (token) {
     saveTokens(token)
     router.push({ name: "home" })
   }
@@ -46,7 +52,10 @@ async function doLogin() {
 
         </div>
 
-        <Button :disabled="invalidLogin" :onClick="doLogin"> Kirjaudu sisään</Button>
+        <Button :disabled="invalidLogin" :onClick="doLogin">
+          <svg v-if="loggingIn" class="mr-3 size-5 animate-spin ..." viewBox="0 0 24 24">
+          </svg>
+          <span>Kirjaudu sisään</span></Button>
       </div>
     </div>
 

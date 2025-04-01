@@ -33,8 +33,8 @@ function doLogout(){
 </script>
 
 <template>
-  <div v-if="showNavLinks" class="md:flex bg-brand-primary p-2 md:flex justify-between">
-    <div class=" flex flex-row gap-6">
+  <div v-if="showNavLinks" class="md:flex bg-brand-primary p-2 md:flex justify-between md:items-center">
+    <div class=" flex flex-row gap-6 md:items-center">
       <button @click="toggleNavOpen" class="cursor-pointer md:hidden">
         <IconMenu class="w-6 text-white" />
       </button>
@@ -43,7 +43,7 @@ function doLogout(){
 
 
     <div class="left-0 md:static absolute md:w-auto bg-brand-primary w-full" :class="navClassName">
-      <div class="md:flex md:flex-row p-4 md:py-0">
+      <div class="md:flex md:flex-row p-4 md:py-0 md:gap-10">
         <ul class="md:flex md:items-center gap-4 ">
           <li class="text-white" v-for="link in links" :key="link"> {{ link }}</li>
         </ul>
