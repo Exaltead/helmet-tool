@@ -28,6 +28,14 @@ async function doLogin() {
   }
 }
 
+const loginDisabled = computed(() => {
+  return loggingIn.value || invalidLogin.value
+})
+
+const loginText = computed(() => {
+  return loggingIn.value ? "Kirjaudutaan sisään..." : "Kirjaudu sisään"
+})
+
 </script>
 
 <template>
@@ -52,13 +60,17 @@ async function doLogin() {
 
         </div>
 
-        <Button :disabled="invalidLogin" :onClick="doLogin">
-          <svg v-if="loggingIn" class="mr-3 size-5 animate-spin ..." viewBox="0 0 24 24">
-          </svg>
-          <span>Kirjaudu sisään</span></Button>
+        <Button :disabled="loginDisabled" :onClick="doLogin">
+          <div class="flex flex-row gap-2 items-center">
+            <div v-if="loggingIn"
+              class="bg-brand-primary text-white mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
+            </div>
+            <span>{{ loginText }}</span>
+          </div>
+        </Button>
       </div>
-    </div>
 
+    </div>
 
   </main>
 </template>
