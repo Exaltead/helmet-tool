@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-  <button @click="onClick" class="bg-brand-primary text-white font-bold rounded cursor-pointer py-1 px-2">
+  <button @click="onClick" class="bg-brand-primary text-white font-bold rounded cursor-pointer py-1 px-2" type="button">
     <slot>{{ display }}</slot>
   </button>
 </template>

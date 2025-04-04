@@ -15,10 +15,8 @@ namespace HelmetToolBackend.Challenges
         public string Id { get; set; } = string.Empty;
     }
 
-    public class GetChallenges(ILoggerFactory loggerFactory, IJwtHandler jwtHandler)
+    public class GetChallenges(ILogger<GetChallenges> _logger, IJwtHandler _jwtHandler)
     {
-        private readonly ILogger _logger = loggerFactory.CreateLogger<HttpExample>();
-        private readonly IJwtHandler _jwtHandler = jwtHandler;
 
         [Function("GetChallenges")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
