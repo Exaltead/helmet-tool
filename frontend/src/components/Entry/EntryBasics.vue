@@ -48,7 +48,7 @@ function toggleEdit() {
       <p>Kirjailija: {{ item.author }}</p>
       <p>Kääntäjä: {{ item.translator }}</p>
     </div>
-    <Button :onClick="toggleEdit">{{ displayText }}</Button>
+    <Button :onClick="toggleEdit" :text="displayText" ></Button>
   </div>
 
 </template>

@@ -29,6 +29,11 @@ export async function fetchLibraryItems(): Promise<Entry[]> {
       Authorization: `Bearer ${getAccessToken()}`,
     },
   })
+
+  if (!resp.ok) {
+    throw new Error("Failed to fetch library items")
+  }
+
   const data: ApiLibraryItem[] = libraryItemSchema.array().parse(await resp.json())
 
   const books = data

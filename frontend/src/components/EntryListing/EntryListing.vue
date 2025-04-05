@@ -3,10 +3,10 @@
 import { computed, ref } from "vue"
 import Button from "@/components/basics/Button.vue"
 import EditEntryModal from "@/components/EntryListing/NewEntryModal.vue"
-import type { Book, Entry } from "@/models/entry"
+import type { Entry } from "@/models/entry"
 import IconPlus from "@/components/icons/IconPlus.vue"
 import { RouterLink } from "vue-router"
-import { addLibraryItem, fetchLibraryItems } from "@/api/libraryApi"
+import { fetchLibraryItems } from "@/api/libraryApi"
 
 
 const selectedEntry = ref<Entry | undefined>(undefined)
@@ -31,10 +31,7 @@ function openNewEntryDialog() {
 }
 
 
-
-async function addNewEntry(item: Omit<Book, "id">): Promise<void> {
-
-  await addLibraryItem(item)
+async function onNewItemSubmitComplete() {
   showDialog.value = false
   selectedEntry.value = undefined
 
@@ -54,7 +51,7 @@ function closeModals(): void {
     <div class="ml-10 flex flex-col">
       <div class="flex flex-row gap-10">
         <h1 class="text-brand-primary text-bold text-lg">Luetut kirjat</h1>
-        <Button hidden :onClick="openNewEntryDialog" display="Uusi kirja"></Button>
+        <Button hidden :onClick="openNewEntryDialog" text="Uusi kirja"></Button>
       </div>
 
       <div class="flex gap-4 mt-6 flex-wrap">
@@ -78,7 +75,7 @@ function closeModals(): void {
 
     </div>
 
-    <EditEntryModal :is-modal-open="showDialog" :onSubmit="addNewEntry" :onClose="closeModals"
+    <EditEntryModal :is-modal-open="showDialog" @submitComplete="onNewItemSubmitComplete" @close="closeModals"
       :selected-entry="selectedEntry" />
 
   </div>

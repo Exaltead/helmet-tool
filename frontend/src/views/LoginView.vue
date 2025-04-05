@@ -60,13 +60,7 @@ const loginText = computed(() => {
 
         </div>
 
-        <Button :disabled="loginDisabled" :onClick="doLogin">
-          <div class="flex flex-row gap-2 items-center">
-            <div v-if="loggingIn"
-              class="bg-brand-primary text-white mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
-            </div>
-            <span>{{ loginText }}</span>
-          </div>
+        <Button :disabled="loginDisabled" :onClick="doLogin" :text="loginText" :is-submitting="loggingIn">
         </Button>
       </div>
 

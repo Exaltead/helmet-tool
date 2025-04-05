@@ -4,14 +4,17 @@ import type { Book } from '@/models/entry';
 import Button from '@/components/basics/Button.vue';
 import { ref } from 'vue'
 import TextInput from "@/components/basics/TextInput.vue"
+import { addLibraryItem } from '@/api/libraryApi';
 
-interface Props {
+
+const { isModalOpen } = defineProps<{
   isModalOpen: boolean
-  onSubmit: (book: Omit<Book, "id">) => void
-  onClose: () => void
-}
+}>()
 
-const { isModalOpen, onClose, onSubmit } = defineProps<Props>()
+const emit = defineEmits<{
+  (e: "submitComplete"): void
+  (e: "close"): void
+}>()
 
 type NewBook = {
   name: string,
@@ -27,10 +30,12 @@ const newBookBase: NewBook = {
 
 const model = ref<NewBook>({ ...newBookBase })
 
+const isSubmitting = ref(false)
+
 
 function closeModal(): void {
   model.value = { ...newBookBase }
-  onClose()
+  emit("close")
 }
 
 async function submitModal(): Promise<void> {
@@ -41,9 +46,13 @@ async function submitModal(): Promise<void> {
     translator: model.value.translator,
   }
 
-  console.log("submitModal")
+
+  isSubmitting.value = true
+  await addLibraryItem(newBook)
+  isSubmitting.value = false
+  emit("submitComplete")
+
   model.value = { ...newBookBase }
-  onSubmit(newBook)
 }
 
 
@@ -57,8 +66,8 @@ async function submitModal(): Promise<void> {
         <TextInput name="author" label="Kirjailija" :required="true" v-model="model.author" />
         <TextInput name="translator" label="Kääntäjä" :required="false" v-model="model.translator" />
         <div class="flex flex-row justify-between py-2">
-          <Button :onClick="closeModal"> {{ "Peru" }}</Button>
-          <Button :onClick="submitModal"> {{ "Tallenna" }}</Button>
+          <Button :onClick="closeModal" text="Peru"></Button>
+          <Button :onClick="submitModal" text="Tallenna"></Button>
         </div>
       </div>
     </form>
