@@ -7,8 +7,8 @@ namespace HelmetToolBackend.Auth
 
     public class JwtHandler : IJwtHandler
     {
-
-        private readonly string _secretKey = "Salaisuuuuuus";
+        // TODO: unify config management at some point
+        private readonly string _secretKey = Environment.GetEnvironmentVariable("SecretKey") ?? "DefaultSecretKey";
         public string SignUserToken(User user)
         {
             var payload = new Dictionary<string, object>

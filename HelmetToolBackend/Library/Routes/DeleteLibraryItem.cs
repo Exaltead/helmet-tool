@@ -13,7 +13,7 @@ namespace HelmetToolBackend.Library.Routes
     public class DeleteLibraryItem(ILogger<AddLibraryItem> _logger, IJwtHandler _jwtHandler, ILibraryStorage _libraryStorage)
     {
         [Function("DeleteLibraryItem")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "library/{itemId}")] HttpRequest req, string itemId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "library/{itemId}")] HttpRequest req, string itemId)
         {
             var user = _jwtHandler.GetUser(req);
 

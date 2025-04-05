@@ -12,7 +12,7 @@ namespace HelmetToolBackend.Library.Routes
     public class ListLibraryItems(ILogger<AddLibraryItem> _logger, IJwtHandler _jwtHandler, ILibraryStorage _libraryStorage)
     {
         [Function("ListLibraryItems")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "library")] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "library")] HttpRequest req)
         {
             var user = _jwtHandler.GetUser(req);
 

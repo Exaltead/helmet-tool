@@ -16,7 +16,7 @@ namespace HelmetToolBackend.Library.Routes
 
 
         [Function("AddLibraryItem")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "library")] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "library")] HttpRequest req)
         {
             var user = _jwtHandler.GetUser(req);
 
