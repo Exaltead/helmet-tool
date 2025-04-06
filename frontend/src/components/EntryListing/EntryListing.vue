@@ -5,10 +5,10 @@ import Button from "@/components/basics/Button.vue"
 import EditEntryModal from "@/components/EntryListing/NewEntryModal.vue"
 import type { Entry } from "@/models/entry"
 import IconPlus from "@/components/icons/IconPlus.vue"
-import { RouterLink } from "vue-router"
+import { RouterLink, useRouter } from "vue-router"
 import { fetchLibraryItems } from "@/api/libraryApi"
 
-
+const router = useRouter()
 const selectedEntry = ref<Entry | undefined>(undefined)
 
 const items = ref<Entry[]>([])
@@ -31,11 +31,11 @@ function openNewEntryDialog() {
 }
 
 
-async function onNewItemSubmitComplete() {
+async function onNewItemSubmitComplete(id: string): Promise<void> {
   showDialog.value = false
   selectedEntry.value = undefined
 
-  await getItems()
+  router.push({ name: "libraryItem", params: { id } })
 }
 
 function closeModals(): void {

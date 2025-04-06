@@ -4,9 +4,11 @@ namespace HelmetToolBackend.Library
 {
     public interface ILibraryStorage
     {
-        Task AddLibraryItem(LibraryItem item);
+        Task<string> AddLibraryItem(LibraryItem item);
         Task DeleteLibraryItem(string id);
-        Task<LibraryItem?> GetLibraryItem(string id);
+        Task<LibraryItem?> GetLibraryItem(string id, string userId);
         Task<List<LibraryItem>> GetAllLibraryItems(string userId);
+
+        Task UpdateLibraryItem(LibraryItem item);
     }
 }

@@ -1,10 +1,14 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
+import IconBack from "@/components/icons/IconBack.vue"
+
+type IconName = "back"
 
 defineProps<{
   onClick: () => void
-  text: string
+  text?: string
   isSubmitting?: boolean
+  icon?: IconName
 }>()
 
 
@@ -16,7 +20,10 @@ defineProps<{
       <div v-if="isSubmitting"
         class="bg-brand-primary text-white mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
       </div>
-      <span>{{ text }}</span>
+      <div v-if="icon && icon === 'back'" >
+        <IconBack class="text-white w-4 h-fit"/>
+      </div>
+      <span v-if="text">{{ text }}</span>
     </div>
   </button>
 </template>

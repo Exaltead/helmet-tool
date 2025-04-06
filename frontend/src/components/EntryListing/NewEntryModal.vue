@@ -12,7 +12,7 @@ const { isModalOpen } = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: "submitComplete"): void
+  (e: "submitComplete", id: string): void
   (e: "close"): void
 }>()
 
@@ -48,9 +48,15 @@ async function submitModal(): Promise<void> {
 
 
   isSubmitting.value = true
-  await addLibraryItem(newBook)
+  const newId = await addLibraryItem(newBook)
+  if (newId === undefined) {
+
+    //TODO: show error to user
+    isSubmitting.value = false
+    return
+  }
   isSubmitting.value = false
-  emit("submitComplete")
+  emit("submitComplete", newId)
 
   model.value = { ...newBookBase }
 }

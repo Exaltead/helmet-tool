@@ -25,7 +25,7 @@ namespace HelmetToolBackend.Library.Routes
             var itemId = req.Query["itemId"].ToString();
             if (!string.IsNullOrEmpty(itemId))
             {
-                var item = await _libraryStorage.GetLibraryItem(itemId);
+                var item = await _libraryStorage.GetLibraryItem(itemId, user.Id);
                 if (item == null)
                 {
                     _logger.LogWarning("Library item with id {id} not found.", itemId);

@@ -37,15 +37,10 @@ namespace HelmetToolBackend.Library.Routes
             }
 
             var newItem = libraryItem with { UserId = user!.Id, Id = Guid.NewGuid().ToString() };
-            if (newItem.Book != null)
-            {
-                newItem.Book.Id = newItem.Id;
-            }
 
+            var id = await _libraryStorage.AddLibraryItem(newItem);
 
-            await _libraryStorage.AddLibraryItem(newItem);
-
-            return new OkObjectResult("Item added");
+            return new OkObjectResult(new { id });
         }
     }
 }

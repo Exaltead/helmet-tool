@@ -1,4 +1,4 @@
-import type { Book, Entry } from "@/models/entry"
+import type { Entry } from "@/models/entry"
 import { getAccessToken } from "@/modules/auth-store"
 import { z } from "zod"
 
@@ -8,7 +8,6 @@ const libraryBookSchema = z.object({
   title: z.string(),
   author: z.string(),
   translator: z.string().nullish(),
-  //kanittaja: z.string().nullable()
 })
 
 const libraryItemSchema = z.object({
@@ -21,13 +20,30 @@ type ApiLibraryItem = z.infer<typeof libraryItemSchema>
 const newApiLibraryItemSchema = libraryItemSchema.omit({ id: true })
 type NewApiLibraryItem = z.infer<typeof newApiLibraryItemSchema>
 
+function getHeaders(): HeadersInit {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${getAccessToken()}`,
+  }
+}
+
+function mapApiLibraryItem(item: ApiLibraryItem): Entry {
+  if (item.book !== undefined) {
+    return {
+      kind: "Book",
+      id: item.id,
+      name: item.book!.title,
+      author: item.book!.author,
+      translator: item.book?.translator ? item.book?.translator : undefined,
+    }
+  }
+  throw new Error("Item type not supported yet")
+}
+
 export async function fetchLibraryItems(): Promise<Entry[]> {
   const resp = await fetch(`${API_URL}/library`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
+    headers: getHeaders(),
   })
 
   if (!resp.ok) {
@@ -36,52 +52,92 @@ export async function fetchLibraryItems(): Promise<Entry[]> {
 
   const data: ApiLibraryItem[] = libraryItemSchema.array().parse(await resp.json())
 
-  const books = data
-    .filter((item) => item.book !== undefined)
-    .map(
-      (item) =>
-        ({
-          kind: "Book",
-          id: item.id,
-          name: item.book!.title,
-          author: item.book!.author,
-          translator: item.book?.translator ? item.book?.translator : undefined,
-        }) satisfies Book,
-    )
-
-  // As there are right now no other types of entries, we can just return the books
-  return books
+  return data.filter((item) => item.book !== undefined).map((t) => mapApiLibraryItem(t))
 }
 
-export async function addLibraryItem(item: Omit<Entry, "id">): Promise<void> {
+export async function addLibraryItem(item: Omit<Entry, "id">): Promise<string | undefined> {
   try {
     const newLibraryItem: NewApiLibraryItem = {
       book: {
         title: item.name,
         author: item.author,
-        translator: item.translator, // null //item.translator ? item.translator : null,
+        translator: item.translator,
       },
     }
 
     const validatedItem = newApiLibraryItemSchema.parse(newLibraryItem)
     const body = JSON.stringify(validatedItem)
-    console.log("Adding library item", body)
-
-    console.dir(validatedItem, { depth: null })
 
     const resp = await fetch(`${API_URL}/library`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAccessToken()}`,
-      },
+      headers: getHeaders(),
       body: body,
     })
 
     if (!resp.ok) {
       throw new Error("Failed to add library item")
     }
+
+    const data = z
+      .object({
+        id: z.string(),
+      })
+      .parse(await resp.json())
+    return data.id
   } catch (e) {
     console.error("Error adding library item", e)
   }
+}
+
+export async function deleteLibraryItem(id: string): Promise<void> {
+  const resp = await fetch(`${API_URL}/library/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  })
+
+  if (!resp.ok) {
+    throw new Error("Failed to delete library item")
+  }
+}
+
+export async function updateLibraryItem(item: Entry): Promise<void> {
+  const apiItem: ApiLibraryItem = {
+    id: item.id,
+    book: {
+      title: item.name,
+      author: item.author,
+      translator: item.translator,
+    },
+  }
+
+  const validatedItem = libraryItemSchema.parse(apiItem)
+  const body = JSON.stringify(validatedItem)
+  const resp = await fetch(`${API_URL}/library/${item.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+    body: body,
+  })
+  if (!resp.ok) {
+    throw new Error("Failed to update library item")
+  }
+}
+
+export async function fetchLibraryItem(id: string): Promise<Entry> {
+  const resp = await fetch(`${API_URL}/library?itemId=${id}`, {
+    method: "GET",
+    headers: getHeaders(),
+  })
+  if (!resp.ok) {
+    throw new Error("Failed to fetch library item")
+  }
+  const data: ApiLibraryItem[] = libraryItemSchema.array().parse(await resp.json())
+  const selected = data[0]
+  if (selected === undefined) {
+    throw new Error("Item not found")
+  }
+
+  return mapApiLibraryItem(selected)
 }

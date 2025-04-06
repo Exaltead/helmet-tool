@@ -25,7 +25,7 @@ namespace HelmetToolBackend.Library.Routes
 
             _logger.LogInformation("User {user} tried to delete a library item {itemId}.", user?.Username, itemId);
 
-            var item = await _libraryStorage.GetLibraryItem(itemId);
+            var item = await _libraryStorage.GetLibraryItem(itemId, user!.Id);
             if (item == null)
             {
                 _logger.LogWarning("Library item with id {id} not found.", itemId);

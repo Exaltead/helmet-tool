@@ -21,7 +21,7 @@ namespace HelmetToolBackend.Library
             _logger = loggerFactory.CreateLogger<LibraryStorage>();
         }
 
-        public async Task AddLibraryItem(LibraryItem item)
+        public async Task<string> AddLibraryItem(LibraryItem item)
         {
             var response = await _container.CreateItemAsync(item, new PartitionKey(item.UserId));
             if (response.StatusCode != System.Net.HttpStatusCode.Created)
@@ -30,6 +30,8 @@ namespace HelmetToolBackend.Library
                 throw new Exception($"Failed to add library item with id {item.Id}.");
             }
             _logger.LogInformation("Added library item with id {id}.", item.Id);
+
+            return item.Id!;
         }
         public async Task<List<LibraryItem>> GetAllLibraryItems(string userId)
         {
@@ -48,11 +50,11 @@ namespace HelmetToolBackend.Library
             return results;
         }
 
-        public async Task<LibraryItem?> GetLibraryItem(string id)
+        public async Task<LibraryItem?> GetLibraryItem(string id, string userId)
         {
             try
             {
-                var response = await _container.ReadItemAsync<LibraryItem>(id, new PartitionKey(id));
+                var response = await _container.ReadItemAsync<LibraryItem>(id, new PartitionKey(userId));
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     return response.Resource;
@@ -75,6 +77,17 @@ namespace HelmetToolBackend.Library
                 throw new Exception($"Failed to delete library item with id {id}.");
             }
             _logger.LogInformation("Deleted library item with id {id}.", id);
+        }
+
+        public async Task UpdateLibraryItem(LibraryItem item)
+        {
+            var response = await _container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.UserId));
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                _logger.LogError("Failed to update library item with id {id}.", item.Id);
+                throw new Exception($"Failed to update library item with id {item.Id}.");
+            }
+            _logger.LogInformation("Updated library item with id {id}.", item.Id);
         }
     }
 }

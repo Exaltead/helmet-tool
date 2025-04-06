@@ -5,7 +5,6 @@ namespace HelmetToolBackend.Models
         public string Title { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
         public string? Translator { get; set; }
-        public string? Id { get; set; } = string.Empty;
     }
 
     public record LibraryItem
