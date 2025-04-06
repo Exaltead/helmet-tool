@@ -1,8 +1,9 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
 import IconBack from "@/components/icons/IconBack.vue"
+import IconDelete from "@/components/icons/IconDelete.vue"
 
-type IconName = "back"
+type IconName = "back" | "delete"
 
 defineProps<{
   onClick: () => void
@@ -22,6 +23,9 @@ defineProps<{
       </div>
       <div v-if="icon && icon === 'back'" >
         <IconBack class="text-white w-4 h-fit"/>
+      </div>
+      <div v-if="icon && icon === 'delete'" >
+        <IconDelete class="text-white w-4 h-fit"/>
       </div>
       <span v-if="text">{{ text }}</span>
     </div>

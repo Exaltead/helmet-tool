@@ -10,6 +10,10 @@ const itemId = z.string().parse(route.params.id)
 
 const router = useRouter()
 
+function toLibrary() {
+  router.push({ name: "home" })
+}
+
 </script>
 
 <template>
@@ -19,7 +23,7 @@ const router = useRouter()
         <IconBack class="text-brand-primary w-8 h-fit cursor-pointer" />
       </button>
       <div class="px-4 md:px-10 flex flex-col gap-10">
-        <EntryBasics :item-id="itemId" />
+        <EntryBasics :item-id="itemId" @objectDeleted="toLibrary" />
         <EntryChallenge />
       </div>
     </div>

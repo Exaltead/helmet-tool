@@ -3,7 +3,7 @@ import type { Entry } from '@/models/entry';
 import { ref } from 'vue';
 import Button from "@/components/basics/Button.vue"
 import TextInput from "@/components/basics/TextInput.vue"
-import { fetchLibraryItem, updateLibraryItem } from '@/api/libraryApi';
+import { fetchLibraryItem, updateLibraryItem, deleteLibraryItem } from '@/api/libraryApi';
 
 
 
@@ -13,6 +13,7 @@ const { itemId } = defineProps<{
 
 const emit = defineEmits<{
   (e: "objectEdited"): void
+  (e: "objectDeleted"): void
 }>()
 
 const item = ref<Entry | undefined>(undefined)
@@ -56,6 +57,17 @@ async function submit() {
   await getItem(itemId)
 }
 
+const isDeleting = ref(false)
+async function deleteItem() {
+  if( item.value === undefined) {
+    return
+  }
+  isDeleting.value = true
+  await deleteLibraryItem(itemId)
+  isDeleting.value = false
+  emit("objectDeleted")
+}
+
 </script>
 
 <template>
@@ -73,14 +85,16 @@ async function submit() {
 
       </div>
     </div>
-    <div class="flex flex-row items-center justify-between" v-else>
+    <div class="flex flex-row items-start justify-between" v-else>
       <div class="flex flex-col gap-1" v-if="item">
         <p>Nimi: {{ item.name }}</p>
         <p>Kirjailija: {{ item.author }}</p>
         <p>Kääntäjä: {{ item.translator }}</p>
       </div>
-      <Button :onClick="enableEditMode" text="Muokkaa"></Button>
-
+      <div class="flex flex-row gap-2 align-top justify-start">
+        <Button :onClick="enableEditMode" text="Muokkaa" :isSubmitting="isSubmitting"></Button>
+        <Button :onClick="deleteItem" text="Poista" icon="delete" :isSubmitting="isDeleting"></Button>
+      </div>
     </div>
 
   </div>

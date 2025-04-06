@@ -38,7 +38,7 @@ namespace HelmetToolBackend.Library.Routes
                 return new UnauthorizedResult();
             }
 
-            await _libraryStorage.DeleteLibraryItem(itemId);
+            await _libraryStorage.DeleteLibraryItem(itemId, user.Id);
             _logger.LogInformation("Library item {itemId} deleted.", itemId);
 
             return new OkObjectResult("Library item deleted successfully.");

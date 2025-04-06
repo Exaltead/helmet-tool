@@ -68,9 +68,9 @@ namespace HelmetToolBackend.Library
             return null;
         }
 
-        public async Task DeleteLibraryItem(string id)
+        public async Task DeleteLibraryItem(string id, string userId)
         {
-            var response = await _container.DeleteItemAsync<LibraryItem>(id, new PartitionKey(id));
+            var response = await _container.DeleteItemAsync<LibraryItem>(id, new PartitionKey(userId));
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
                 _logger.LogError("Failed to delete library item with id {id}.", id);
