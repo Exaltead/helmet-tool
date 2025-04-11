@@ -60,7 +60,7 @@ function closeModals(): void {
             <IconPlus class="w-20 text-white"></IconPlus>
           </button>
         </div>
-        <div v-for="entry in listItems" :key="entry.id" class=" bg-white shadow-lg rounded ">
+        <div v-for="entry in listItems" :key="entry.id" class="bg-white shadow-lg rounded">
           <RouterLink :to="{ name: 'libraryItem', params: { id: entry.id } }">
             <div class="flex flex-col h-full w-full cursor-pointer p-10">
               <p>{{ entry.name }}</p>

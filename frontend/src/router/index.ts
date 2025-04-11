@@ -3,6 +3,7 @@ import EntryListingView from "@/views/EntryListingView.vue"
 import EntryView from "@/views/EntryView.vue"
 import LoginView from "@/views/LoginView.vue"
 import { isLoggedIn } from "@/modules/auth-store"
+import ChallengeManagementView from "@/views/ChallengeManagementView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,11 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
+    },
+    {
+      path: "/manageChallenges",
+      name: "manageChallenges",
+      component: ChallengeManagementView,
     },
   ],
 })

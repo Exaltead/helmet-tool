@@ -24,7 +24,7 @@ const showNavLinks = computed(() => {
   return router.currentRoute.value.name !== "login"
 })
 
-function doLogout(){
+function doLogout() {
   clearTokens()
   navOpen.value = false
   router.push({ name: "login" })
@@ -43,10 +43,15 @@ function doLogout(){
 
 
     <div class="left-0 md:static absolute md:w-auto bg-brand-primary w-full" :class="navClassName">
-      <div class="md:flex md:flex-row p-4 md:py-0 md:gap-10">
+      <div class="md:flex md:flex-row p-4 md:py-0 md:gap-10 items-center">
         <ul class="md:flex md:items-center gap-4 ">
           <li class="text-white" v-for="link in links" :key="link"> {{ link }}</li>
         </ul>
+        <div class="h-fit">
+          <RouterLink :to="{ name: 'manageChallenges' }" class="text-white">
+            <span class="cursor-pointer">Hallinnoi haasteita</span>
+          </RouterLink>
+        </div>
 
 
         <div class="mt-10 md:mt-0 md:pl-4 text-white border w-fit p-2 rounded-lg">
