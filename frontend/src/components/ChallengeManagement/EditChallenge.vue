@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import IconPlus from "@/components/icons/IconPlus.vue"
 import IconBack from '@/components/icons/IconBack.vue';
 import BrandedButton from '../basics/BrandedButton.vue';
+import { addChallenge } from '@/api/challengeApi';
 const { target } = defineProps<{ target: Challenge | undefined }>()
 
 function createEditTarget(target: Challenge | undefined): Challenge {
@@ -28,7 +29,7 @@ function createEditTarget(target: Challenge | undefined): Challenge {
   }
 }
 const emit = defineEmits<{
-  (e: "submitComplete", id: string): void
+  (e: "submitComplete"): void
   (e: "close"): void
 }>()
 
@@ -68,17 +69,22 @@ function removeQuestion(id: string) {
 
 }
 
-function submit() {
+async function submit() {
   if (editTarget.value === undefined) {
     return
   }
 
+  const toSend: Challenge = {
+    ...editTarget.value,
+    status: activeCheckBox.value ? "active" : "inactive"
+  }
+
   isSubmitting.value = true
-  // Simulate an API call
-  setTimeout(() => {
-    isSubmitting.value = false
-    emit("submitComplete", editTarget.value.id)
-  }, 2000)
+
+  await addChallenge(toSend)
+  isSubmitting.value = false
+
+  emit("submitComplete")
 }
 
 </script>

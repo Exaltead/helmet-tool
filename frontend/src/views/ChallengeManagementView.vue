@@ -79,7 +79,7 @@ function handleSubmitComplete(): void {
 
 <template>
   <div class="">
-    <EditChallenge v-if="isEditing" :target="selectedItem" @submitComplete="(id) => { handleSubmitComplete() }"
+    <EditChallenge v-if="isEditing" :target="selectedItem" @submitComplete="() => { handleSubmitComplete() }"
       @close="handleClose" />
     <ManageChallenges v-else :challenges="data" @edit-challenge="(challenge) => handleEdit(challenge)"
       @create-challenge="handleCreate" />

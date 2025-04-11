@@ -1,4 +1,5 @@
 using HelmetToolBackend.Auth;
+using HelmetToolBackend.Challenges;
 using HelmetToolBackend.Library;
 using HelmetToolBackend.Storage;
 using Microsoft.Azure.Cosmos;
@@ -14,6 +15,7 @@ var host = new HostBuilder()
         services.AddSingleton<IAuthClient, AuthClient>();
         services.AddSingleton<IJwtHandler, JwtHandler>();
         services.AddSingleton<ILibraryStorage, LibraryStorage>();
+        services.AddSingleton<IChallengeStorage, ChallengeStorage>();
         services.AddSingleton((_) =>
         {
             var connectionString = Environment.GetEnvironmentVariable("CosmosDBConnectionString")
