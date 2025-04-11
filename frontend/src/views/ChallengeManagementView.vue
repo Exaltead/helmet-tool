@@ -1,60 +1,18 @@
 <script lang="ts" setup>
+import { fetchChallenges } from '@/api/challengeApi';
 import EditChallenge from '@/components/ChallengeManagement/EditChallenge.vue';
 import ManageChallenges from '@/components/ChallengeManagement/ManageChallenges.vue';
 import type { Challenge } from '@/models/challenge';
 import { ref } from 'vue';
 
-// Mockup data for challenges
-const data: Challenge[] = [
-  {
-    id: "1",
-    name: 'Haaste 1',
-    questions: [
-      {
-        id: "1",
-        question: "Oliko hyvä kirja?",
-        number: 0
-      },
-      {
-        id: "2",
-        question: "Sisälsikö kettuja?",
-        number: 1
-      },
-      {
-        id: "3",
-        question: "Oliko LimaMetroja?",
-        number: 2
-      }
 
-    ],
-    status: 'active',
-    targetMedia: "Book"
-  },
-  {
-    id: "2",
-    name: 'Haaste 2',
-    questions: [
-      {
-        id: "1",
-        question: "Oliko huono kirja?",
-        number: 0
-      },
-      {
-        id: "2",
-        question: "Sisälsikö mursuja?",
-        number: 1
-      },
-      {
-        id: "3",
-        question: "Oliko limasieniä?",
-        number: 2
-      }
+const data = ref<Challenge[]>([]);
 
-    ],
-    status: 'active',
-    targetMedia: "Book"
-  }
-];
+async function getChallenges(): Promise<void> {
+  data.value = await fetchChallenges()
+}
+
+getChallenges()
 
 const isEditing = ref(false);
 const selectedItem = ref<Challenge | undefined>(undefined);
@@ -74,6 +32,7 @@ function handleClose(): void {
 function handleSubmitComplete(): void {
   isEditing.value = false;
   selectedItem.value = undefined;
+  getChallenges()
 }
 </script>
 

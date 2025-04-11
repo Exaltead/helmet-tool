@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import IconPlus from "@/components/icons/IconPlus.vue"
 import IconBack from '@/components/icons/IconBack.vue';
 import BrandedButton from '../basics/BrandedButton.vue';
-import { addChallenge } from '@/api/challengeApi';
+import { addChallenge, updateChallenge } from '@/api/challengeApi';
 const { target } = defineProps<{ target: Challenge | undefined }>()
 
 function createEditTarget(target: Challenge | undefined): Challenge {
@@ -80,8 +80,13 @@ async function submit() {
   }
 
   isSubmitting.value = true
+  if (toSend.id === "") {
+    await addChallenge(toSend)
+  }
+  else {
+    await updateChallenge(toSend)
+  }
 
-  await addChallenge(toSend)
   isSubmitting.value = false
 
   emit("submitComplete")
