@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 import { computed, ref } from "vue"
-import Button from "@/components/basics/Button.vue"
+import Button from "@/components/basics/BrandedButton.vue"
 import EditEntryModal from "@/components/EntryListing/NewEntryModal.vue"
 import type { Entry } from "@/models/entry"
 import IconPlus from "@/components/icons/IconPlus.vue"

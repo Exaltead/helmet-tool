@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Modal from '@/components/basics/Modal.vue';
+import Modal from '@/components/basics/PopupModal.vue';
 import type { Book } from '@/models/entry';
-import Button from '@/components/basics/Button.vue';
+import Button from '@/components/basics/BrandedButton.vue';
 import { ref } from 'vue'
 import TextInput from "@/components/basics/TextInput.vue"
 import { addLibraryItem } from '@/api/libraryApi';

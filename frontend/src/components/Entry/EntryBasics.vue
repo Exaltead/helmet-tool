@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Entry } from '@/models/entry';
 import { ref } from 'vue';
-import Button from "@/components/basics/Button.vue"
+import Button from "@/components/basics/BrandedButton.vue"
 import TextInput from "@/components/basics/TextInput.vue"
 import { fetchLibraryItem, updateLibraryItem, deleteLibraryItem } from '@/api/libraryApi';
 
@@ -59,7 +59,7 @@ async function submit() {
 
 const isDeleting = ref(false)
 async function deleteItem() {
-  if( item.value === undefined) {
+  if (item.value === undefined) {
     return
   }
   isDeleting.value = true

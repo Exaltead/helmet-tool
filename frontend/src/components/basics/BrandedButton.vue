@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
 import IconBack from "@/components/icons/IconBack.vue"
 import IconDelete from "@/components/icons/IconDelete.vue"
@@ -21,11 +20,11 @@ defineProps<{
       <div v-if="isSubmitting"
         class="bg-brand-primary text-white mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
       </div>
-      <div v-if="icon && icon === 'back'" >
-        <IconBack class="text-white w-4 h-fit"/>
+      <div v-if="icon && icon === 'back'">
+        <IconBack class="text-white w-4 h-fit" />
       </div>
-      <div v-if="icon && icon === 'delete'" >
-        <IconDelete class="text-white w-4 h-fit"/>
+      <div v-if="icon && icon === 'delete'">
+        <IconDelete class="text-white w-4 h-fit" />
       </div>
       <span v-if="text">{{ text }}</span>
     </div>
