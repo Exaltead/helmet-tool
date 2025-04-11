@@ -8,7 +8,7 @@ import IconBack from '@/components/icons/IconBack.vue';
 import BrandedButton from '../basics/BrandedButton.vue';
 const { target } = defineProps<{ target: Challenge | undefined }>()
 
-function createEditTarget(): Challenge {
+function createEditTarget(target: Challenge | undefined): Challenge {
   if (target === undefined) {
     return {
       id: "",
@@ -18,16 +18,23 @@ function createEditTarget(): Challenge {
       targetMedia: "Book"
     }
   } else {
-    return target
+    return {
+      ...target,
+      questions: target.questions.map((question) => ({
+        ...question
+      })).sort((a, b) => a.number - b.number)
+    }
+
   }
 }
 const emit = defineEmits<{
   (e: "submitComplete", id: string): void
   (e: "close"): void
 }>()
+
 const isSubmitting = ref(false)
 
-const editTarget = ref<Challenge>(createEditTarget())
+const editTarget = ref<Challenge>(createEditTarget(target))
 const activeCheckBox = ref(editTarget.value.status === "active")
 
 
@@ -43,6 +50,22 @@ function addNewQuestion() {
     number: editTarget.value.questions.length
   }
   editTarget.value.questions.push(newQuestion)
+  editTarget.value.questions.sort((a, b) => a.number - b.number)
+}
+
+function removeQuestion(id: string) {
+  if (editTarget.value.questions.length <= 1) {
+    return
+  }
+  const index = editTarget.value.questions.findIndex((question) => question.id === id)
+  if (index === -1) {
+    return
+  }
+  editTarget.value.questions.splice(index, 1)
+  editTarget.value.questions.forEach((question, i) => {
+    question.number = i
+  })
+
 }
 
 function submit() {
@@ -69,7 +92,7 @@ function submit() {
       <div class="flex flex-col gap-4">
         <div class="flex flex-row gap-4 justify-between items-center">
           <TextInput class="basis-4/5" v-model="editTarget.name" name="Nimi" label="Haasteen nimi" />
-          <BrandedButton text="Tallenna" :onClick="submit" class="h-fit" :isSubmitting="isSubmitting"/>
+          <BrandedButton text="Tallenna" :onClick="submit" class="h-fit" :isSubmitting="isSubmitting" />
         </div>
         <div class="flex flex-row gap-4">
           <label for="kind"> Haasteeseen soveltuvat: </label>
@@ -85,7 +108,8 @@ function submit() {
 
         <h2>Kysymykset</h2>
         <ul class="flex flex-col gap-2">
-          <li v-for="question in editTarget.questions" :key="question.id" class="bg-white shadow-lg rounded px-4 py-2">
+          <li v-for="question in editTarget.questions" :key="question.id"
+            class="bg-white shadow-lg rounded px-4 py-2 flex flex-col gap-2">
             <TextInput v-model="question.question" name="kysymys" label="Kysymys" />
             <div class="flex flex-row gap-4">
               <label for="number">Järjestysnumero</label>
@@ -94,6 +118,9 @@ function submit() {
                   {{ option + 1 }}
                 </option>
               </select>
+            </div>
+            <div class="flex flex-row justify-end">
+              <BrandedButton icon="delete" class="h-fit" :onClick="() => removeQuestion(question.id)" />
             </div>
           </li>
           <button class="mt-4 ml-4 w-full rounded h-full flex justify-center cursor-pointer bg-brand-primary"

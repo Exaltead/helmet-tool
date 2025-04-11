@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import BrandedButton from '@/components/basics/BrandedButton.vue';
 import EditChallenge from '@/components/ChallengeManagement/EditChallenge.vue';
 import ManageChallenges from '@/components/ChallengeManagement/ManageChallenges.vue';
 import type { Challenge } from '@/models/challenge';
@@ -80,7 +79,7 @@ function handleSubmitComplete(): void {
 
 <template>
   <div class="">
-    <EditChallenge v-if="isEditing" :target="data[0]" @submitComplete="(id) => { handleSubmitComplete() }"
+    <EditChallenge v-if="isEditing" :target="selectedItem" @submitComplete="(id) => { handleSubmitComplete() }"
       @close="handleClose" />
     <ManageChallenges v-else :challenges="data" @edit-challenge="(challenge) => handleEdit(challenge)"
       @create-challenge="handleCreate" />
