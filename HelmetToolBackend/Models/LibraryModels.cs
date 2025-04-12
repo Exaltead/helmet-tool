@@ -1,3 +1,5 @@
+using HelmetToolBackend.Shared;
+
 namespace HelmetToolBackend.Models
 {
     public record LibraryBook
@@ -7,12 +9,13 @@ namespace HelmetToolBackend.Models
         public string? Translator { get; set; }
     }
 
-    public record LibraryItem
+    public record LibraryItem : IDbEntity
     {
         public LibraryBook? Book { get; set; }
-        public string? Id { get; set; }
+        public string Id { get; set; } = "";
 
         public string? UserId { get; set; }
         public DateTimeOffset AddDate { get; set; } = DateTimeOffset.UtcNow;
+
     }
 }

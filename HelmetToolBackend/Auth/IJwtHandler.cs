@@ -1,10 +1,9 @@
-using HelmetToolBackend.Storage;
+using HelmetToolBackend.Models;
 
-namespace HelmetToolBackend.Auth
+namespace HelmetToolBackend.Auth;
+
+public interface IJwtHandler
 {
-    public interface IJwtHandler
-    {
-        string SignUserToken(User user);
-        User? VerifyAndDecode(string token);
-    }
+    string SignUserToken(User user);
+    User? VerifyAndDecode(string token);
 }

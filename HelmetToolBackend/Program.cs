@@ -1,7 +1,7 @@
 using HelmetToolBackend.Auth;
 using HelmetToolBackend.Challenges;
 using HelmetToolBackend.Library;
-using HelmetToolBackend.Storage;
+using HelmetToolBackend.Shared;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,11 +16,11 @@ var host = new HostBuilder()
         services.AddSingleton<IJwtHandler, JwtHandler>();
         services.AddSingleton<ILibraryStorage, LibraryStorage>();
         services.AddSingleton<IChallengeStorage, ChallengeStorage>();
-        services.AddSingleton((_) =>
+        services.AddSingleton<Config>();
+        services.AddSingleton((services) =>
         {
-            var connectionString = Environment.GetEnvironmentVariable("CosmosDBConnectionString")
-                ?? throw new InvalidOperationException("CosmosDB connection string is not set.");
-            return new CosmosClient(connectionString, new CosmosClientOptions
+            var config = services.GetRequiredService<Config>();
+            return new CosmosClient(config.CosmosDbConnectionString, new CosmosClientOptions
             {
                 SerializerOptions = new CosmosSerializationOptions
                 {

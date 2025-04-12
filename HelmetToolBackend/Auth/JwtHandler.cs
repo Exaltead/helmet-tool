@@ -1,53 +1,52 @@
 using System.Text;
-using HelmetToolBackend.Storage;
+using HelmetToolBackend.Models;
+using HelmetToolBackend.Shared;
 
-namespace HelmetToolBackend.Auth
+namespace HelmetToolBackend.Auth;
+
+
+
+public class JwtHandler(Config config) : IJwtHandler
 {
-
-
-    public class JwtHandler : IJwtHandler
+    private readonly string _secretKey = config.SecretKey;
+    public string SignUserToken(User user)
     {
-        // TODO: unify config management at some point
-        private readonly string _secretKey = Environment.GetEnvironmentVariable("SecretKey") ?? "DefaultSecretKey";
-        public string SignUserToken(User user)
+        var payload = new Dictionary<string, object>
         {
-            var payload = new Dictionary<string, object>
+            { "id", user.Id },
+            { "username", user.Username },
+            { "exp", DateTimeOffset.UtcNow.AddHours(24).ToUnixTimeSeconds() }
+        };
+
+
+        var secretKey = Encoding.ASCII.GetBytes(_secretKey);
+
+
+
+        var token = Jose.JWT.Encode(payload, secretKey, Jose.JwsAlgorithm.HS256);
+
+        return token;
+    }
+
+    public User? VerifyAndDecode(string token)
+    {
+        var secretKey = Encoding.ASCII.GetBytes(_secretKey);
+
+        try
+        {
+            var payload = Jose.JWT.Decode<Dictionary<string, object>>(token, secretKey);
+
+            if (!payload.ContainsKey("exp") || (long)payload["exp"] < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             {
-                { "id", user.Id },
-                { "username", user.Username },
-                { "exp", DateTimeOffset.UtcNow.AddHours(24).ToUnixTimeSeconds() }
-            };
+                return null; // Token has expired
+            }
 
-
-            var secretKey = Encoding.ASCII.GetBytes(_secretKey);
-
-
-
-            var token = Jose.JWT.Encode(payload, secretKey, Jose.JwsAlgorithm.HS256);
-
-            return token;
+            return new User((string)payload["id"], (string)payload["username"]);
         }
-
-        public User? VerifyAndDecode(string token)
+        catch (Exception ex)
         {
-            var secretKey = Encoding.ASCII.GetBytes(_secretKey);
-
-            try
-            {
-                var payload = Jose.JWT.Decode<Dictionary<string, object>>(token, secretKey);
-
-                if (!payload.ContainsKey("exp") || (long)payload["exp"] < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-                {
-                    return null; // Token has expired
-                }
-
-                return new User((string)payload["id"], (string)payload["username"]);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
+            Console.WriteLine(ex.Message);
+            return null;
         }
     }
 }

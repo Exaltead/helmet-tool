@@ -1,12 +1,11 @@
 using HelmetToolBackend.Models;
 
-namespace HelmetToolBackend.Challenges
+namespace HelmetToolBackend.Challenges;
+
+public interface IChallengeStorage
 {
-    public interface IChallengeStorage
-    {
-        Task<string> AddChallenge(Challenge challenge);
-        Task<List<Challenge>> GetChallenges();
-        Task<bool> UpdateChallenge(Challenge challenge);
-        Task<bool> DeleteChallenge(string id);
-    }
+    Task<string> AddChallenge(Challenge challenge);
+    Task<List<Challenge>> GetChallenges();
+    Task UpdateChallenge(Challenge challenge);
+    Task DeleteChallenge(string id);
 }
