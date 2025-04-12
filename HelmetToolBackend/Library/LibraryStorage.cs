@@ -20,7 +20,7 @@ namespace HelmetToolBackend.Library
         }
         public async Task<List<LibraryItem>> GetAllLibraryItems(string userId)
         {
-            var query = new QueryDefinition("SELECT * FROM library l WHERE l.userId = @userId")
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.userId = @userId")
                 .WithParameter("@userId", userId);
 
             return await ListEntities(query);
