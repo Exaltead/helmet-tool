@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import IconMenu from './icons/IconMenu.vue';
 import { useRouter } from 'vue-router';
 import { clearTokens } from '@/modules/auth-store';
 
-const links = ref([
-  "Kirjat", "Pelit", "Haasteet"
-])
+
 
 const navOpen = ref(false)
 
@@ -19,6 +17,8 @@ function toggleNavOpen() {
 }
 
 const router = useRouter()
+
+watch(router.currentRoute, () => { navOpen.value = false })
 
 const showNavLinks = computed(() => {
   return router.currentRoute.value.name !== "login"
@@ -44,9 +44,11 @@ function doLogout() {
 
     <div class="left-0 md:static absolute md:w-auto bg-brand-primary w-full" :class="navClassName">
       <div class="md:flex md:flex-row p-4 md:py-0 md:gap-10 items-center">
-        <ul class="md:flex md:items-center gap-4 ">
-          <li class="text-white" v-for="link in links" :key="link"> {{ link }}</li>
-        </ul>
+        <div class="h-fit">
+          <RouterLink :to="{ name: 'home' }" class="text-white">
+            <span class="cursor-pointer">Kirjasto</span>
+          </RouterLink>
+        </div>
         <div class="h-fit">
           <RouterLink :to="{ name: 'manageChallenges' }" class="text-white">
             <span class="cursor-pointer">Hallinnoi haasteita</span>

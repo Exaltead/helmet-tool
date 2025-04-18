@@ -10,6 +10,7 @@ const data = ref<Challenge[]>([]);
 
 async function getChallenges(): Promise<void> {
   data.value = await fetchChallenges()
+  console.log("Fetched challenges", data.value)
 }
 
 getChallenges()
