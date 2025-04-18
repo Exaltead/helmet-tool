@@ -35,6 +35,9 @@ export async function getAnswer(
   const content =  schema
     .parse(data)
 
+  if (content.answers.length === 0) {
+    return { answers: [] }
+  }
   if(content.answers.length !== 1) {
     throw new Error("Invalid answer data")
   }

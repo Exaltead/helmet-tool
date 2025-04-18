@@ -3,7 +3,6 @@ import EntryBasics from '@/components/Entry/EntryBasics.vue';
 import EntryChallenge from '@/components/Entry/EntryChallenge.vue';
 import IconBack from '@/components/icons/IconBack.vue';
 import { TabGroup, TabList, TabPanel, TabPanels, Tab } from '@headlessui/vue';
-import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { z } from 'zod';
 
@@ -16,8 +15,16 @@ function toLibrary() {
   router.push({ name: "home" })
 }
 
+const challengeIds = [
+  "42e7fe61-a73d-48cf-9b0a-7dfc83cbc00a",
+  "912b69ca-1394-4109-aa92-9432f380dacd"
+]
 
-const challengeId = ref<string>("42e7fe61-a73d-48cf-9b0a-7dfc83cbc00a")
+function makeTabStyle(selected: boolean) {
+  return selected
+    ? "bg-brand-primary text-white"
+    : "bg-white text-brand-primary hover:bg-brand-primary hover:text-white"
+}
 
 </script>
 
@@ -30,15 +37,16 @@ const challengeId = ref<string>("42e7fe61-a73d-48cf-9b0a-7dfc83cbc00a")
       <div class="px-4 md:px-10 flex flex-col gap-10">
         <EntryBasics :item-id="itemId" @objectDeleted="toLibrary" />
         <TabGroup>
-          <TabList>
-            <Tab>Haaste 1</Tab>
-            <Tab>Haaste 2</Tab>
+          <TabList class="flex flex-row gap-6">
+            <Tab v-for="challengeId, i in challengeIds" :key="challengeId" v-slot="{ selected }">
+              <button :class="makeTabStyle(selected)">
+                <span>{{ `Haaste ${i}` }}</span>
+              </button>
+
+            </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel>
-              <EntryChallenge :itemId="itemId" :challengeId="challengeId" />
-            </TabPanel>
-            <TabPanel>
+            <TabPanel v-for="challengeId in challengeIds" :key="challengeId">
               <EntryChallenge :itemId="itemId" :challengeId="challengeId" />
             </TabPanel>
           </TabPanels>
