@@ -32,7 +32,7 @@ public abstract class BaseRoute<T>(ILogger logger, IJwtHandler jwtHandler)
 
         if (body == null)
         {
-            Logger.LogWarning($"{typeof(T).Name} is null.");
+            Logger.LogWarning("{name} is null.", typeof(T).Name);
             return new BadRequestObjectResult($"{typeof(T).Name} is null.");
         }
 
@@ -53,7 +53,7 @@ public abstract class BaseRoute<T>(ILogger logger, IJwtHandler jwtHandler)
 
         if (body == null)
         {
-            Logger.LogWarning($"{typeof(T).Name} is null.");
+            Logger.LogWarning("{name} is null.", typeof(T).Name);
             return new BadRequestObjectResult($"{typeof(T).Name} is null.");
         }
 

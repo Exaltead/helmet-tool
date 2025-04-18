@@ -1,4 +1,5 @@
 using HelmetToolBackend.Auth;
+using HelmetToolBackend.ChallengeAnswers;
 using HelmetToolBackend.Challenges;
 using HelmetToolBackend.Library;
 using HelmetToolBackend.Shared;
@@ -16,6 +17,7 @@ var host = new HostBuilder()
         services.AddSingleton<IJwtHandler, JwtHandler>();
         services.AddSingleton<ILibraryStorage, LibraryStorage>();
         services.AddSingleton<IChallengeStorage, ChallengeStorage>();
+        services.AddSingleton<IAnswerStorage, AnswerStorage>();
         services.AddSingleton<Config>();
         services.AddSingleton((services) =>
         {

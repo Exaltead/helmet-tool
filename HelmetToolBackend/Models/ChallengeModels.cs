@@ -4,6 +4,7 @@ namespace HelmetToolBackend.Models
 {
     public record QuestionRecord
     {
+        public string Kind { get; set; } = "Boolean";
         public string Id { get; set; } = string.Empty;
         public string Question { get; set; } = string.Empty;
         public int Number { get; set; } = 0;
@@ -22,8 +23,10 @@ namespace HelmetToolBackend.Models
 
     public record AnswerRecord
     {
+        public string Kind { get; set; } = "Boolean";
         public string Id { get; set; } = string.Empty;
         public string QuestionId { get; set; } = string.Empty;
+        public bool Answered { get; set; } = false;
         public string Answer { get; set; } = string.Empty;
 
     }

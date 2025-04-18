@@ -77,16 +77,30 @@ namespace HelmetToolBackend.Shared
 
         public async Task<List<T>> ListEntities(QueryDefinition query)
         {
-            var iterator = Container.GetItemQueryIterator<T>(query);
-            var results = new List<T>();
-
-            while (iterator.HasMoreResults)
+            try
             {
-                var response = await iterator.ReadNextAsync();
-                results.AddRange(response);
+                var iterator = Container.GetItemQueryIterator<T>(query);
+                var results = new List<T>();
+
+                while (iterator.HasMoreResults)
+                {
+                    var response = await iterator.ReadNextAsync();
+                    results.AddRange(response);
+                }
+
+                return results;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Logger.LogWarning("{entityName} not found.", entityName);
+                return [];
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to list {entityName}: {message}", entityName, ex.Message);
+                throw;
             }
 
-            return results;
         }
     }
 }
