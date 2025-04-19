@@ -9,6 +9,7 @@
     <LanguageVersion>8.0</LanguageVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
     <PackageReference Include="jose-jwt" Version="5.1.1" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.*" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />

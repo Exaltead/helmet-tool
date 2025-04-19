@@ -44,6 +44,7 @@ async function submitModal(): Promise<void> {
     name: model.value.name,
     author: model.value.author,
     translator: model.value.translator,
+    activatedChallengeIds: [],
   }
 
 

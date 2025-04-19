@@ -4,9 +4,9 @@ using HelmetToolBackend.Challenges;
 using HelmetToolBackend.Library;
 using HelmetToolBackend.Shared;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -31,6 +31,7 @@ var host = new HostBuilder()
                 }
             });
         });
+        services.AddOpenTelemetry().UseAzureMonitor();
     })
     .Build();
 

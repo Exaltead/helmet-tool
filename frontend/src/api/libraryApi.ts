@@ -35,6 +35,7 @@ function mapApiLibraryItem(item: ApiLibraryItem): Entry {
       name: item.book!.title,
       author: item.book!.author,
       translator: item.book?.translator ? item.book?.translator : undefined,
+      activatedChallengeIds: [],
     }
   }
   throw new Error("Item type not supported yet")
