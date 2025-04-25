@@ -13,6 +13,8 @@ var host = new HostBuilder()
     .ConfigureServices(services =>
     {
         // Register your services here
+        services.AddOpenTelemetry().UseAzureMonitor();
+
         services.AddSingleton<IAuthClient, AuthClient>();
         services.AddSingleton<IJwtHandler, JwtHandler>();
         services.AddSingleton<ILibraryStorage, LibraryStorage>();
@@ -31,7 +33,7 @@ var host = new HostBuilder()
                 }
             });
         });
-        services.AddOpenTelemetry().UseAzureMonitor();
+
     })
     .Build();
 

@@ -20,7 +20,7 @@ const invalidLogin = computed(() => {
 
 async function doLogin() {
   loggingIn.value = true
-  const token = await postLogin(userName.value, password.value)
+  const token = await postLogin(userName.value.trim(), password.value.trim())
   loggingIn.value = false
   if (token) {
     saveTokens(token)
