@@ -8,6 +8,8 @@ namespace HelmetToolBackend.Models
         public string Id { get; set; } = string.Empty;
         public string Question { get; set; } = string.Empty;
         public int Number { get; set; } = 0;
+
+        public int QuestionClusterSize { get; set; } = 1;
     }
 
 

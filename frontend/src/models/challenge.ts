@@ -1,19 +1,24 @@
 import { z } from "zod"
 
+export const questionTypeSchema = z.enum(["Boolean", "TextInput"])
+export type QuestionType = z.infer<typeof questionTypeSchema>
+
 export const questionSchema = z.object({
+  kind: questionTypeSchema,
   id: z.string(),
   question: z.string(),
   number: z.number(),
+  questionClusterSize: z.number(),
 })
 
 export type Question = z.infer<typeof questionSchema>
 
 export const answerSchema = z.object({
-  kind: z.literal("Boolean"),
+  kind: questionTypeSchema,
   id: z.string(),
   questionId: z.string(),
   answered: z.boolean(),
-  answer: z.enum(["yes", "no"]),
+  answer: z.enum(["yes", "no"]).or(z.string()),
 })
 
 export type Answer = z.infer<typeof answerSchema>
