@@ -66,13 +66,22 @@ namespace HelmetToolBackend.Shared
 
         public async Task UpdateEntity(T item)
         {
-            var response = await Container.ReplaceItemAsync(item, item.Id, new PartitionKey(getPartitionKey(item)));
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            try
             {
-                Logger.LogError("Failed to update {entityName} with id {id}.", entityName, item.Id);
-                throw new Exception($"Failed to update {entityName} with id {item.Id}.");
+                var response = await Container.ReplaceItemAsync(item, item.Id, new PartitionKey(getPartitionKey(item)));
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    Logger.LogError("Failed to update {entityName} with id {id}.", entityName, item.Id);
+                    throw new Exception($"Failed to update {entityName} with id {item.Id}.");
+                }
+                Logger.LogInformation("Updated {entityName} with id {id}.", entityName, item.Id);
             }
-            Logger.LogInformation("Updated {entityName} with id {id}.", entityName, item.Id);
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to update {entityName} with id {id}: {message}", entityName, item.Id, ex.Message);
+                throw;
+            }
+
         }
 
         public async Task<List<T>> ListEntities(QueryDefinition query)

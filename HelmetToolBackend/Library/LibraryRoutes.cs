@@ -51,6 +51,8 @@ public class LibraryRoutes(ILogger<LibraryRoutes> _logger, IJwtHandler _jwtHandl
                 return new ForbidResult();
             }
 
+            libraryItem.UserId = user.Id;
+
             await _libraryStorage.UpdateLibraryItem(libraryItem);
 
             return new OkObjectResult("Update successful");

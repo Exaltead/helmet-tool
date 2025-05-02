@@ -17,5 +17,7 @@ namespace HelmetToolBackend.Models
         public string? UserId { get; set; }
         public DateTimeOffset AddDate { get; set; } = DateTimeOffset.UtcNow;
 
+        public List<string> ActivatedChallengeIds { get; set; } = [];
+
     }
 }

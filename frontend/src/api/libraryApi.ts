@@ -13,6 +13,7 @@ const libraryBookSchema = z.object({
 const libraryItemSchema = z.object({
   id: z.string(),
   book: libraryBookSchema.optional(),
+  activatedChallengeIds: z.string().array(),
 })
 
 type ApiLibraryItem = z.infer<typeof libraryItemSchema>
@@ -35,7 +36,7 @@ function mapApiLibraryItem(item: ApiLibraryItem): Entry {
       name: item.book!.title,
       author: item.book!.author,
       translator: item.book?.translator ? item.book?.translator : undefined,
-      activatedChallengeIds: [],
+      activatedChallengeIds: item.activatedChallengeIds,
     }
   }
   throw new Error("Item type not supported yet")
@@ -64,6 +65,7 @@ export async function addLibraryItem(item: Omit<Entry, "id">): Promise<string | 
         author: item.author,
         translator: item.translator,
       },
+      activatedChallengeIds: item.activatedChallengeIds,
     }
 
     const validatedItem = newApiLibraryItemSchema.parse(newLibraryItem)
@@ -109,11 +111,12 @@ export async function updateLibraryItem(item: Entry): Promise<void> {
       author: item.author,
       translator: item.translator,
     },
+    activatedChallengeIds: item.activatedChallengeIds,
   }
 
   const validatedItem = libraryItemSchema.parse(apiItem)
   const body = JSON.stringify(validatedItem)
-  const resp = await fetch(`${API_URL}/library/${item.id}`, {
+  const resp = await fetch(`${API_URL}/library`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -121,6 +124,7 @@ export async function updateLibraryItem(item: Entry): Promise<void> {
     },
     body: body,
   })
+  console.log("Response", resp)
   if (!resp.ok) {
     throw new Error("Failed to update library item")
   }
