@@ -17,6 +17,7 @@ const { item, challenges } = defineProps<{
 const emit = defineEmits<{
   (e: "objectEdited"): void
   (e: "objectDeleted"): void
+  (e: "editModeChanged", inEditMode: boolean): void
 }>()
 
 
@@ -28,6 +29,7 @@ const inEditMode = ref(false)
 function enableEditMode() {
   inEditMode.value = true
   modifyTarget.value = { ...item }
+  emit("editModeChanged", true)
 }
 
 function cancelEdit() {
@@ -47,6 +49,7 @@ async function submit() {
   inEditMode.value = false
   modifyTarget.value = undefined
   emit("objectEdited")
+  emit("editModeChanged", false)
 
 }
 
@@ -56,6 +59,7 @@ async function deleteItem() {
   await deleteLibraryItem(item.id)
   isDeleting.value = false
   emit("objectDeleted")
+  emit("editModeChanged", false)
 }
 
 const activatedChallengeList = computed(() => {

@@ -124,7 +124,7 @@ export async function updateLibraryItem(item: Entry): Promise<void> {
     },
     body: body,
   })
-  console.log("Response", resp)
+
   if (!resp.ok) {
     throw new Error("Failed to update library item")
   }

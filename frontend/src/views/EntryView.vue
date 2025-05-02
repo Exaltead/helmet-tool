@@ -7,7 +7,7 @@ import IconBack from '@/components/icons/IconBack.vue';
 import type { Challenge } from '@/models/challenge';
 import type { Entry } from '@/models/entry';
 import { TabGroup, TabList, TabPanel, TabPanels, Tab } from '@headlessui/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { z } from 'zod';
 
@@ -34,16 +34,32 @@ async function getItem() {
 getItem()
 
 
-const challengeIds = [
-  "42e7fe61-a73d-48cf-9b0a-7dfc83cbc00a",
-  "912b69ca-1394-4109-aa92-9432f380dacd"
-]
-
 function makeTabStyle(selected: boolean) {
   return selected
     ? "bg-brand-primary text-white"
     : "bg-white text-brand-primary hover:bg-brand-primary hover:text-white"
 }
+
+const inEditMode = ref(false)
+function setEditingMode(state: boolean) {
+  inEditMode.value = state
+  if (state === false) {
+    // As disabling the edit mode, we need to fetch the item again
+    getItem()
+  }
+}
+
+const challengeKeys = computed(() => {
+  if (item.value) {
+    const mapped = item.value.activatedChallengeIds.map((t, i) => {
+      const challenge = challenges.value.find(t2 => t2.id === t)
+      return { value: t, display: challenge?.name ?? ("Haaste " + i) }
+    })
+
+    return mapped
+  }
+  return []
+})
 
 </script>
 
@@ -54,19 +70,19 @@ function makeTabStyle(selected: boolean) {
         <IconBack class="text-brand-primary w-8 h-fit cursor-pointer" />
       </button>
       <div class="px-4 md:px-10 flex flex-col gap-10" v-if="item">
-        <EntryBasics @objectDeleted="toLibrary" :challenges="challenges" @object-edited="getItem" :item="item" />
-        <TabGroup>
+        <EntryBasics @objectDeleted="toLibrary" :challenges="challenges" @object-edited="getItem" :item="item"
+          @edit-mode-changed="setEditingMode" />
+        <TabGroup v-if="!inEditMode && challengeKeys.length > 0">
           <TabList class="flex flex-row gap-6">
-            <Tab v-for="challengeId, i in challengeIds" :key="challengeId" v-slot="{ selected }">
+            <Tab v-for="{ display, value } in challengeKeys" :key="value" v-slot="{ selected }">
               <button :class="makeTabStyle(selected)">
-                <span>{{ `Haaste ${i}` }}</span>
+                <span>{{ display }}</span>
               </button>
-
             </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel v-for="challengeId in challengeIds" :key="challengeId">
-              <EntryChallenge :itemId="itemId" :challengeId="challengeId" />
+            <TabPanel v-for="{ value } in challengeKeys" :key="value">
+              <EntryChallenge :itemId="itemId" :challengeId="value" />
             </TabPanel>
           </TabPanels>
         </TabGroup>
