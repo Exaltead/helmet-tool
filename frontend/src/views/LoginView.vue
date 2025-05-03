@@ -44,7 +44,7 @@ const loginText = computed(() => {
       <div
         class="flex flex-col justify-center w-fit border border-brand-primary bg-light-gray rounded-lg shadow-lg p-10 pt-4 gap-10">
 
-        <p class="mx-auto text-lg  font-bold">Kirjaudu sisään Tekili-lin</p>
+        <p class="mx-auto text-lg  font-bold">Kirjaudu sisään Haasteikkoon</p>
         <div class="flex flex-col gap-10 max-w-md mx-auto">
 
           <div class="flex flex-col gap-2">
@@ -60,8 +60,12 @@ const loginText = computed(() => {
 
         </div>
 
-        <Button :disabled="loginDisabled" :onClick="doLogin" :text="loginText" :is-submitting="loggingIn">
-        </Button>
+        <div class="flex w-full justify-center">
+          <Button :disabled="loginDisabled" :onClick="doLogin" :text="loginText" :is-submitting="loggingIn"
+            class="border border-brand-primary rounded">
+            Kirjaudu sisään
+          </Button>
+        </div>
       </div>
 
     </div>

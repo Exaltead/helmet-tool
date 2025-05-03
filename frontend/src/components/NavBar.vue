@@ -65,6 +65,6 @@ function doLogout() {
 
   </div>
   <div v-else class="bg-brand-primary p-2">
-    <h1 class="font-bold text-white">Tikeli-li</h1>
+    <h1 class="font-bold text-text-primary">Haasteikko</h1>
   </div>
 </template>
