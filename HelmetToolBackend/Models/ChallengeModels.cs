@@ -30,6 +30,7 @@ namespace HelmetToolBackend.Models
         public string QuestionId { get; set; } = string.Empty;
         public bool Answered { get; set; } = false;
         public string Answer { get; set; } = string.Empty;
+        public string ItemId { get; set; } = string.Empty;
 
     }
 
@@ -40,6 +41,22 @@ namespace HelmetToolBackend.Models
         public string ItemId { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
         public DateTimeOffset AddDate { get; set; } = DateTimeOffset.UtcNow;
-        public AnswerRecord[] Answers { get; set; } = [];
+        public List<AnswerRecord> Answers { get; set; } = [];
+    }
+
+    public record QuestionSolution
+    {
+        public string QuestionId { get; set; } = string.Empty;
+        public string SingleAnswerItemId { get; set; } = string.Empty;
+        public List<string> MultipleAnswerItemIds { get; set; } = [];
+    }
+
+    public record SolutionSet : IDbEntity
+    {
+        public string Id { get; set; } = string.Empty;
+        public string ChallengeId { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public DateTimeOffset AddDate { get; set; } = DateTimeOffset.UtcNow;
+        public List<QuestionSolution> Solutions { get; set; } = [];
     }
 }

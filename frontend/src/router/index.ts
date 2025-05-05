@@ -4,6 +4,8 @@ import EntryView from "@/views/EntryView.vue"
 import LoginView from "@/views/LoginView.vue"
 import { isLoggedIn } from "@/modules/auth-store"
 import ChallengeManagementView from "@/views/ChallengeManagementView.vue"
+import ChallengeSolutionView from "@/views/ChallengeSolutionView.vue"
+import OverallChallengesView from "@/views/OverallChallengesView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,16 @@ const router = createRouter({
       path: "/manageChallenges",
       name: "manageChallenges",
       component: ChallengeManagementView,
+    },
+    {
+      path: "/challenges",
+      name: "challenges",
+      component: OverallChallengesView,
+    },
+    {
+      path: "/challenges/:id",
+      name: "challengeSolution",
+      component: ChallengeSolutionView,
     },
   ],
 })

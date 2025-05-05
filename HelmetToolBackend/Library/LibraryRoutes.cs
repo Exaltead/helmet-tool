@@ -28,10 +28,28 @@ public class LibraryRoutes(ILogger<LibraryRoutes> _logger, IJwtHandler _jwtHandl
     {
         return await WithUser(req, async user =>
         {
-            _logger.LogInformation("User {user} tried list library items", user.Username);
-            var libraryItems = await _libraryStorage.GetAllLibraryItems(user.Id);
+            if (req.Query.TryGetValue("itemId", out var itemId) && !string.IsNullOrEmpty(itemId))
+            {
+                var libraryItem = await _libraryStorage.GetLibraryItem(itemId!, user.Id);
+                if (libraryItem == null)
+                {
+                    return new NotFoundObjectResult("Library item not found.");
+                }
+                if (libraryItem.UserId != user.Id)
+                {
+                    _logger.LogWarning("User {user} tried to get library item {itemId} that does not belong to them.", user.Username, itemId);
+                    return new StatusCodeResult(403);
+                }
+                return new OkObjectResult(new[] { libraryItem });
+            }
+            else
+            {
+                _logger.LogInformation("User {user} tried list library items", user.Username);
+                var libraryItems = await _libraryStorage.GetAllLibraryItems(user.Id);
 
-            return new OkObjectResult(libraryItems);
+                return new OkObjectResult(libraryItems);
+            }
+
         });
     }
 

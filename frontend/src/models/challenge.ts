@@ -19,6 +19,7 @@ export const answerSchema = z.object({
   questionId: z.string(),
   answered: z.boolean(),
   answer: z.enum(["yes", "no"]).or(z.string()),
+  itemId: z.string(),
 })
 
 export type Answer = z.infer<typeof answerSchema>
@@ -31,3 +32,19 @@ export const challengeSchema = z.object({
   questions: questionSchema.array(),
 })
 export type Challenge = z.infer<typeof challengeSchema>
+
+export const solutionSchema = z.object({
+  questionId: z.string(),
+  singleAnswerItemId: z.string(),
+  multipleAnswerItemIds: z.string().array(),
+})
+
+export type Solution = z.infer<typeof solutionSchema>
+
+export const solutionSetSchema = z.object({
+  id: z.string().uuid(),
+  challengeId: z.string().uuid(),
+  solutions: solutionSchema.array(),
+})
+
+export type SolutionSet = z.infer<typeof solutionSetSchema>

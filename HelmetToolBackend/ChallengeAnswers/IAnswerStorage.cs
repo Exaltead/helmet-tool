@@ -6,6 +6,7 @@ public interface IAnswerStorage
 {
     Task<string> AddAnswerSet(ChallengeAnswerSet answers);
     Task<List<ChallengeAnswerSet>> GetAnswers(string userId, string challengeId, string itemId);
+    Task<List<ChallengeAnswerSet>> GetAnswers(string userId, string challengeId);
     Task UpdateAnswers(ChallengeAnswerSet answer);
     Task DeleteAnswer(string id, string userId);
 

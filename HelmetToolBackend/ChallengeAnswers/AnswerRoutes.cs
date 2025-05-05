@@ -11,12 +11,36 @@ namespace HelmetToolBackend.ChallengeAnswers;
 
 public class ChallengeRoutes(ILogger<ChallengeRoutes> _logger, IJwtHandler _jwtHandler, IAnswerStorage _answerStorage) : BaseRoute<ChallengeAnswerSet>(_logger, _jwtHandler)
 {
+    private static List<AnswerRecord> UpdateAnswersState(IEnumerable<AnswerRecord> answers)
+    {
+        return [.. answers.Select(a =>
+        {
+            if (string.IsNullOrEmpty(a.Id.Trim()))
+            {
+                a.Id = Guid.NewGuid().ToString();
+            }
+
+            if (a.Kind == "Boolean")
+            {
+                a.Answered = true;
+            }
+            else if (a.Kind == "TextInput")
+            {
+                a.Answer = a.Answer.Trim();
+                a.Answered = !string.IsNullOrEmpty(a.Answer);
+            }
+            return a;
+        })];
+    }
+
     [Function("AddAnswer")]
     public async Task<IActionResult> AddAnswer([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "answer")] HttpRequest req)
     {
         return await WithUserAndBody(req, async (user, answer) =>
         {
             var newItem = answer with { Id = Guid.NewGuid().ToString(), UserId = user.Id };
+
+            newItem.Answers = UpdateAnswersState(newItem.Answers);
 
             var id = await _answerStorage.AddAnswerSet(newItem);
 
@@ -29,7 +53,7 @@ public class ChallengeRoutes(ILogger<ChallengeRoutes> _logger, IJwtHandler _jwtH
     {
         var challengeId = req.Query["challengeId"].ToString();
         var itemId = req.Query["itemId"].ToString();
-        if (string.IsNullOrEmpty(challengeId) || string.IsNullOrEmpty(itemId))
+        if (string.IsNullOrEmpty(challengeId))
         {
             _logger.LogWarning("ChallengeId or ItemId is null or empty.");
             return new BadRequestObjectResult("ChallengeId or ItemId is null or empty.");
@@ -38,9 +62,26 @@ public class ChallengeRoutes(ILogger<ChallengeRoutes> _logger, IJwtHandler _jwtH
         return await WithUser(req, async user =>
         {
             _logger.LogInformation("User {user} tried list challenges", user.Username);
-            var answers = await _answerStorage.GetAnswers(user.Id, challengeId, itemId);
+            if (!string.IsNullOrEmpty(itemId))
+            {
+                var answers = await _answerStorage.GetAnswers(user.Id, challengeId, itemId);
 
-            return new OkObjectResult(new { answers });
+                return new OkObjectResult(new { answers });
+            }
+            else
+            {
+                var answers = await _answerStorage.GetAnswers(user.Id, challengeId);
+
+                var onlyAnswers = answers.SelectMany(x =>
+                {
+                    var mapped = x.Answers.Select(a => a with { ItemId = x.ItemId });
+                    return mapped;
+                }).ToList();
+
+                return new OkObjectResult(onlyAnswers);
+            }
+
+
         });
     }
 
@@ -68,7 +109,7 @@ public class ChallengeRoutes(ILogger<ChallengeRoutes> _logger, IJwtHandler _jwtH
                 return new StatusCodeResult(403);
             }
 
-            await _answerStorage.UpdateAnswers(answer with { UserId = user.Id });
+            await _answerStorage.UpdateAnswers(answer with { UserId = user.Id, Answers = UpdateAnswersState(answer.Answers) });
 
             return new OkObjectResult("Update successful");
         });

@@ -26,22 +26,40 @@ export async function getAnswer(
 
   const data = await resp.json()
   const schema = z.object({
-    answers: z.object({
-      id: z.string().uuid().optional(),
-      answers: answerSchema.array(),
-    }).array(),
+    answers: z
+      .object({
+        id: z.string().uuid().optional(),
+        answers: answerSchema.array(),
+      })
+      .array(),
   })
 
-  const content =  schema
-    .parse(data)
+  const content = schema.parse(data)
 
   if (content.answers.length === 0) {
     return { answers: [] }
   }
-  if(content.answers.length !== 1) {
+  if (content.answers.length !== 1) {
     throw new Error("Invalid answer data")
   }
   return content.answers[0]
+}
+
+export async function getChallengeAnswers(challengeId: string): Promise<Answer[]> {
+  const resp = await fetch(`${API_URL}/answer?challengeId=${challengeId}`, {
+    method: "GET",
+    headers: getHeaders(),
+  })
+
+  if (!resp.ok) {
+    throw new Error("Failed to fetch answers")
+  }
+
+  const data = await resp.json()
+
+  const content = answerSchema.array().parse(data)
+
+  return content
 }
 
 export async function addAnswer(
@@ -73,7 +91,7 @@ export async function updateAnswer(
   const resp = await fetch(`${API_URL}/answer`, {
     method: "PUT",
     headers: getHeaders(),
-    body: JSON.stringify({id, challengeId, itemId, answers }),
+    body: JSON.stringify({ id, challengeId, itemId, answers }),
   })
 
   if (!resp.ok) {

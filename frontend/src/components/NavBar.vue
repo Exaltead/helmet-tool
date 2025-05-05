@@ -30,6 +30,7 @@ function doLogout() {
   router.push({ name: "login" })
 }
 
+
 </script>
 
 <template>
@@ -38,7 +39,7 @@ function doLogout() {
       <button @click="toggleNavOpen" class="cursor-pointer md:hidden">
         <IconMenu class="w-6 text-white" />
       </button>
-      <h1 class="font-bold text-white">Lukuhaaste</h1>
+      <h1 class="font-bold text-text-primary">Haasteikko</h1>
     </div>
 
 
@@ -50,13 +51,18 @@ function doLogout() {
           </RouterLink>
         </div>
         <div class="h-fit">
+          <RouterLink :to="{ name: 'challenges' }" class="text-white">
+            <span class="cursor-pointer">Haasteet</span>
+          </RouterLink>
+        </div>
+        <div class="h-fit">
           <RouterLink :to="{ name: 'manageChallenges' }" class="text-white">
             <span class="cursor-pointer">Hallinnoi haasteita</span>
           </RouterLink>
         </div>
 
 
-        <div class="mt-10 md:mt-0 md:pl-4 text-white border w-fit p-2 rounded-lg">
+        <div class="mt-10 md:mt-0 md:px-4 text-text-primary border w-fit p-2 rounded-lg">
           <button :onClick="doLogout" class="cursor-pointer">Kirjaudu ulos</button>
         </div>
       </div>

@@ -15,5 +15,6 @@ namespace HelmetToolBackend.Shared
         public string CosmosDbContainerNameAnswers = "answers";
         public string CosmosDbContainerNameUsers = "users";
         public string CosmosDbContainerNameItems = "items";
+        public string CosmosDbContainerNameSolutions = "solutions";
     }
 }

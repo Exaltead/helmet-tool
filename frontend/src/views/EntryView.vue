@@ -7,12 +7,11 @@ import IconBack from '@/components/icons/IconBack.vue';
 import type { Challenge } from '@/models/challenge';
 import type { Entry } from '@/models/entry';
 import { TabGroup, TabList, TabPanel, TabPanels, Tab } from '@headlessui/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { z } from 'zod';
 
-const route = useRoute("libraryItem")
-const itemId = z.string().parse(route.params.id)
+const route = useRoute()
 
 const router = useRouter()
 
@@ -21,17 +20,26 @@ function toLibrary() {
 }
 
 const challenges = ref<Challenge[]>([])
+const item = ref<Entry | undefined>(undefined)
+
 async function getChallenges() {
   challenges.value = await fetchChallenges()
 }
-getChallenges()
-
-const item = ref<Entry | undefined>(undefined)
 async function getItem() {
-  item.value = await fetchLibraryItem(itemId)
+  const itemId = z.string().parse(route.params.id)
+  const foundItem = await fetchLibraryItem(itemId)
+  item.value = foundItem
 }
 
-getItem()
+async function fetchData() {
+  await Promise.all([getChallenges(), getItem()])
+}
+
+
+
+
+watch(() => route.params.id, fetchData, { immediate: true })
+
 
 
 function makeTabStyle(selected: boolean) {
@@ -82,7 +90,7 @@ const challengeKeys = computed(() => {
           </TabList>
           <TabPanels>
             <TabPanel v-for="{ value } in challengeKeys" :key="value">
-              <EntryChallenge :itemId="itemId" :challengeId="value" />
+              <EntryChallenge :itemId="item.id" :challengeId="value" />
             </TabPanel>
           </TabPanels>
         </TabGroup>

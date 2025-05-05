@@ -42,7 +42,8 @@ async function refreshData(): Promise<void> {
         id: id,
         questionId: question.id,
         answered: false,
-        answer: ""
+        answer: "",
+        itemId: props.itemId,
       })
     }
     else if (question.kind === "Boolean") {
@@ -51,7 +52,8 @@ async function refreshData(): Promise<void> {
         id: id,
         questionId: question.id,
         answered: false,
-        answer: "no"
+        answer: "no",
+        itemId: props.itemId,
       })
     }
     else {

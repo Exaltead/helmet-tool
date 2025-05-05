@@ -40,4 +40,13 @@ public class AnswerStorage(ILoggerFactory loggerFactory, CosmosClient client, Co
     {
         return await GetEntity(id, userId);
     }
+
+    public Task<List<ChallengeAnswerSet>> GetAnswers(string userId, string challengeId)
+    {
+        var query = new QueryDefinition("SELECT * FROM answers a WHERE a.userId = @userId AND a.challengeId = @challengeId")
+            .WithParameter("@userId", userId)
+            .WithParameter("@challengeId", challengeId);
+
+        return ListEntities(query);
+    }
 }

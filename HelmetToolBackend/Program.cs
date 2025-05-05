@@ -7,6 +7,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using HelmetToolBackend.ChallengeSolution;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -20,6 +21,7 @@ var host = new HostBuilder()
         services.AddSingleton<ILibraryStorage, LibraryStorage>();
         services.AddSingleton<IChallengeStorage, ChallengeStorage>();
         services.AddSingleton<IAnswerStorage, AnswerStorage>();
+        services.AddSingleton<ISolutionStorage, SolutionStorage>();
         services.AddSingleton<Config>();
         services.AddSingleton((services) =>
         {
