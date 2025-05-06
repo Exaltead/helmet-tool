@@ -40,7 +40,7 @@ getChallengesAndSolutions()
 <template>
   <div>
     <h2>Käynnissä olevat haasteet</h2>
-    <ul>
+    <ul class="flex flex-col gap-4">
       <li v-for="challengeAndSolution in activeChallenges" :key="challengeAndSolution.challenge.id" class="ml-4">
         <RouterLink :to="{ name: 'challengeSolution', params: { id: challengeAndSolution.challenge.id } }">
           <span>{{ challengeAndSolution.challenge.name }}</span>
@@ -52,7 +52,7 @@ getChallengesAndSolutions()
 
     <div v-if="pastChallenges.length > 0">
       <h2>Menneet haasteet</h2>
-      <ul>
+      <ul class="flex flex-col gap-4">
         <li v-for="challengeAndSolution in pastChallenges" :key="challengeAndSolution.challenge.id" class="ml-4">
           <RouterLink :to="{ name: 'challengeSolution', params: { id: challengeAndSolution.challenge.id } }">
             <span>{{ challengeAndSolution.challenge.name }}</span>
