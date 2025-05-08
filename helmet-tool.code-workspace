@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "HelmetToolBackend"
+		},
+		{
+			"path": "infra"
 		}
 	],
 	"settings": {
