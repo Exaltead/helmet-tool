@@ -1,9 +1,35 @@
 param appName string
 param appMemGBQuota int = 10
+
+@secure()
+param clientSecret string
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var location = resourceGroup().location
 var funcAppName = '${appName}-func-${uniqueSuffix}'
 var hostingAccountName = '${appName}hs${uniqueSuffix}'
+
+resource keyVault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
+  name: 'kv${appName}${uniqueSuffix}'
+  location: location
+  properties: {
+    sku: {
+      family: 'A'
+      name: 'standard'
+    }
+    tenantId: subscription().tenantId
+    accessPolicies: []
+    enableRbacAuthorization: true
+  }
+
+  resource clientSecretKey 'secrets' = {
+    name: 'ClientSecret'
+    properties: {
+      contentType: 'text/plain'
+      value: clientSecret
+    }
+  }
+}
 
 resource databaseAccount 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-preview' = {
   name: '${appName}-db-${uniqueSuffix}'
@@ -286,6 +312,21 @@ resource storageBlobDataReaderRole 'Microsoft.Authorization/roleDefinitions@2022
   scope: subscription()
 }
 
+resource keyVaultRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  name: '4633458b-17de-408a-b874-0445c86b69e6'
+  scope: keyVault
+}
+
+resource roleAssignmentKeyVault 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, funcAppIdentity.id, 'Key Vault Secrets User')
+  scope: keyVault
+  properties: {
+    principalId: funcAppIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: keyVaultRoleDefinition.id
+  }
+}
+
 resource readAssignmentToHostBucket 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: hostingStorageAccount
   name: guid(resourceGroup().id, hostingStorageAccount.id, 'readAssignmentToHostBucket')
@@ -336,6 +377,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
     serverFarmId: hostingPlan.id
     httpsOnly: true
     dailyMemoryTimeQuota: appMemGBQuota
+    keyVaultReferenceIdentity: funcAppIdentity.id
     siteConfig: {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
       appSettings: [
@@ -368,7 +410,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         { name: 'DatabaseName', value: databaseStorage.name }
         {
           name: 'SecretKey'
-          value: 'foobar'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${keyVault::clientSecretKey.name})'
         }
         { name: 'APPLICATIONINSIGHTS_INSTRUMENTATIONKEY', value: applicationInsights.properties.InstrumentationKey }
         {
