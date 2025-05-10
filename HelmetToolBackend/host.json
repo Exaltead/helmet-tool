@@ -4,9 +4,16 @@
         "applicationInsights": {
             "samplingSettings": {
                 "isEnabled": true,
-                "excludedTypes": "Request"
+                "excludedTypes": ""
             },
             "enableLiveMetricsFilters": true
+        },
+        "logLevel": {
+            "default": "Information",
+            "Host.Aggregator": "Warning",
+            "Host.Results": "Information",
+            "Host.General": "Warning",
+            "Function": "Information"
         }
     }
 }

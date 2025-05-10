@@ -1,9 +1,233 @@
 param appName string
-
+param appMemGBQuota int = 10
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var location = resourceGroup().location
 var funcAppName = '${appName}-func-${uniqueSuffix}'
 var hostingAccountName = '${appName}hs${uniqueSuffix}'
+
+resource databaseAccount 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-preview' = {
+  name: '${appName}-db-${uniqueSuffix}'
+  location: location
+  kind: 'GlobalDocumentDB'
+  properties: {
+    publicNetworkAccess: 'Enabled'
+    enableAutomaticFailover: false
+    enableMultipleWriteLocations: false
+    isVirtualNetworkFilterEnabled: false
+    virtualNetworkRules: []
+    disableKeyBasedMetadataWriteAccess: false
+    enableFreeTier: false
+    enableAnalyticalStorage: false
+    analyticalStorageConfiguration: {
+      schemaType: 'WellDefined'
+    }
+    createMode: 'Default'
+    databaseAccountOfferType: 'Standard'
+    enableMaterializedViews: false
+    capacityMode: 'Serverless'
+    defaultIdentity: 'FirstPartyIdentity'
+    networkAclBypass: 'None'
+    disableLocalAuth: false
+    enablePartitionMerge: false
+    enablePerRegionPerPartitionAutoscale: false
+    enableBurstCapacity: false
+    enablePriorityBasedExecution: false
+    minimalTlsVersion: 'Tls12'
+    consistencyPolicy: {
+      defaultConsistencyLevel: 'Session'
+      maxIntervalInSeconds: 5
+      maxStalenessPrefix: 100
+    }
+    locations: [
+      {
+        locationName: 'North Europe'
+        failoverPriority: 0
+        isZoneRedundant: false
+      }
+    ]
+    cors: []
+    capabilities: []
+    ipRules: []
+    backupPolicy: {
+      type: 'Continuous'
+      continuousModeProperties: {
+        tier: 'Continuous7Days'
+      }
+    }
+    networkAclBypassResourceIds: []
+    diagnosticLogSettings: {
+      enableFullTextQuery: 'None'
+    }
+    capacity: {
+      totalThroughputLimit: 4000
+    }
+  }
+}
+
+resource databaseStorage 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-12-01-preview' = {
+  parent: databaseAccount
+  name: '${appName}-db'
+  properties: {
+    resource: {
+      id: '${appName}-db'
+    }
+  }
+}
+
+resource userContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-12-01-preview' = {
+  parent: databaseStorage
+  name: 'users'
+  properties: {
+    resource: {
+      id: 'users'
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/"_etag"/?'
+          }
+        ]
+      }
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+        version: 2
+      }
+    }
+  }
+}
+
+resource answersCosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-12-01-preview' = {
+  parent: databaseStorage
+  name: 'answers'
+  properties: {
+    resource: {
+      id: 'answers'
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        automatic: true
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/"_etag"/?'
+          }
+        ]
+      }
+      partitionKey: {
+        paths: [
+          '/userId'
+        ]
+        kind: 'Hash'
+        version: 2
+      }
+    }
+  }
+}
+
+resource challengesCosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-12-01-preview' = {
+  parent: databaseStorage
+  name: 'challenges'
+  properties: {
+    resource: {
+      id: 'challenges'
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        automatic: true
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/"_etag"/?'
+          }
+        ]
+      }
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+        version: 2
+      }
+    }
+  }
+}
+
+resource libraryCosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-12-01-preview' = {
+  parent: databaseStorage
+  name: 'library'
+  properties: {
+    resource: {
+      id: 'library'
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        automatic: true
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/"_etag"/?'
+          }
+        ]
+      }
+      partitionKey: {
+        paths: [
+          '/userId'
+        ]
+        kind: 'Hash'
+        version: 2
+      }
+    }
+  }
+}
+
+resource solutionsCosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-12-01-preview' = {
+  parent: databaseStorage
+  name: 'solutions'
+  properties: {
+    resource: {
+      id: 'solutions'
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        automatic: true
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/"_etag"/?'
+          }
+        ]
+      }
+      partitionKey: {
+        paths: [
+          '/userId'
+        ]
+        kind: 'Hash'
+        version: 2
+      }
+    }
+  }
+}
 
 resource hostingStorageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: hostingAccountName
@@ -72,6 +296,19 @@ resource readAssignmentToHostBucket 'Microsoft.Authorization/roleAssignments@202
   }
 }
 
+resource roleAssignmentAppInsights 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, applicationInsights.id, funcAppIdentity.id, 'Monitoring Metrics Publisher')
+  scope: applicationInsights
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '3913510d-42f4-4e42-8a64-420c390055eb'
+    )
+    principalId: funcAppIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 resource hostingPlan 'Microsoft.Web/serverfarms@2024-04-01' = {
   name: '${appName}-plan-${uniqueSuffix}'
   location: location
@@ -98,6 +335,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
     reserved: true
     serverFarmId: hostingPlan.id
     httpsOnly: true
+    dailyMemoryTimeQuota: appMemGBQuota
     siteConfig: {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
       appSettings: [
@@ -124,13 +362,18 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         }
         { name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED', value: '0' }
         {
-          name: 'CosmosDBConnectionString'
-          value: 'foobar'
+          name: 'CosmosDbConnectionString'
+          value: listConnectionStrings(databaseAccount.id, '2019-12-12').connectionStrings[0].connectionString
         }
-        { name: 'DatabaseName', value: 'foobar' }
+        { name: 'DatabaseName', value: databaseStorage.name }
         {
           name: 'SecretKey'
           value: 'foobar'
+        }
+        { name: 'APPLICATIONINSIGHTS_INSTRUMENTATIONKEY', value: applicationInsights.properties.InstrumentationKey }
+        {
+          name: 'APPLICATIONINSIGHTS_AUTHENTICATION_STRING'
+          value: 'ClientId=${funcAppIdentity.properties.clientId};Authorization=AAD'
         }
         { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: applicationInsights.properties.ConnectionString }
         { name: 'WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID', value: funcAppIdentity.id }
