@@ -280,6 +280,11 @@ resource backendContainer 'Microsoft.Storage/storageAccounts/blobServices/contai
   }
 }
 
+resource webContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' = {
+  parent: hostingStorageAccountBlobService
+  name: '$web'
+}
+
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2025-02-01' = {
   name: '${appName}-la-${uniqueSuffix}'
   location: location
@@ -380,6 +385,9 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
     keyVaultReferenceIdentity: funcAppIdentity.id
     siteConfig: {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
+      cors: {
+        allowedOrigins: [substring(hostingStorageAccount.properties.primaryEndpoints.web, 0, length(hostingStorageAccount.properties.primaryEndpoints.web) - 1) ]
+      }
       appSettings: [
         { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' }
         {

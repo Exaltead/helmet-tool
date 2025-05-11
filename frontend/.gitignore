@@ -30,3 +30,5 @@ coverage
 *.tsbuildinfo
 .env.production
 deploy.sh
+stg-deploy.sh
+prod-deploy.sh
