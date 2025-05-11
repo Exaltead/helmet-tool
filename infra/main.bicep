@@ -386,6 +386,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
     siteConfig: {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
       cors: {
+#disable-next-line BCP329
         allowedOrigins: [substring(hostingStorageAccount.properties.primaryEndpoints.web, 0, length(hostingStorageAccount.properties.primaryEndpoints.web) - 1) ]
       }
       appSettings: [
