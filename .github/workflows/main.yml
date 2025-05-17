@@ -41,7 +41,7 @@ jobs:
         with:
           inlineScript: |
             az storage blob service-properties update --account-name  ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --static-website --404-document index.html --index-document index.html --auth-mode key
-            az storage blob sync -c \$web --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode key -s ./frontend/dis
+            az storage blob sync -c \$web --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode key -s ./frontend/dist
 
       - name: Setup GO
         uses: actions/setup-go@v5
