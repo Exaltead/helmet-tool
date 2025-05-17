@@ -9,6 +9,7 @@ env:
   AZURE_FUNCTIONAPP_NAME: "haasteikkostg-flex-api-hsvowedtubwye"
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "./backend/deployment"
   AZURE_STORAGE_ACCOUNT_NAME: "haasteikkostghshsvowedt"
+  API_URL: "https://haasteikkostg-flex-api-hsvowedtubwye.azurewebsites.net/api"
 
 jobs:
   build-and-deploy:
@@ -64,8 +65,8 @@ jobs:
           node-version: "22.x"
 
       - name: Build frontend
-        env: 
-          VITE_API_URL: 'https://${{ env.AZURE_STORAGE_ACCOUNT_NAME }}.azurewebsites.net/api'
+        env:
+          VITE_API_URL: ${{ env.API_URL }}
         run: |
           cd frontend
           npm ci
