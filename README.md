@@ -1,3 +1,12 @@
 # Installation instructions
 
 Node.js, rust, install cargo-lambda
+
+
+## CI/CD
+
+Create required app registrations from entra portal.
+
+Give website contributor for the function app: [Website Contributor'](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/web-and-mobile#website-contributor)
+
+Give blob owner for the storage container: `Storage Blob Data Owner`

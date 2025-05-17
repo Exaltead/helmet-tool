@@ -5,8 +5,6 @@ on:
     branches:
       - main
 
-
-
 env:
   AZURE_FUNCTIONAPP_NAME: "haasteikkostg-flex-api-hsvowedtubwye"
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "./backend/deployment"
@@ -30,24 +28,12 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm ci
-          npm run build
-
-      - name: Upload to blob storage
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az storage blob service-properties update --account-name  ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --static-website --404-document index.html --index-document index.html --auth-mode key
-            az storage blob sync -c \$web --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode key -s ./frontend/dist
-
       - name: Setup GO
         uses: actions/setup-go@v5
         with:
           go-version: "1.24.x"
-          working-directory: backend
+          cache-dependency-path: |
+            backend/go.sum
 
       - name: Build backend binary
         run: |
@@ -66,19 +52,31 @@ jobs:
 
       - name: "Deploy backend to Azure Functions"
         uses: "Azure/functions-action@v1"
-        id: "fa"
+        id: functions-deployment
         with:
           sku: "flexconsumption"
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_STG }}
 
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
 
+      - name: Build frontend
+        env: 
+          VITE_API_URL: 'https://${{ secrets.VITE_API_URL }}.azurewebsites.net/api'
+        run: |
+          cd frontend
+          npm ci
+          npm run build
 
+      - name: Upload to blob storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob service-properties update --account-name  ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --static-website --404-document index.html --index-document index.html --auth-mode key
+            az storage blob sync -c \$web --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode key -s ./frontend/dist
 
         # Azure logout
       - name: logout
