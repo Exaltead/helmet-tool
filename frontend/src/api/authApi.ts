@@ -25,5 +25,7 @@ export async function postLogin(username: string, password: string): Promise<str
   }
   const data = loginResponseSchema.parse(await resp.json())
 
+  console.log("Login response:", data)
+
   return data.token
 }

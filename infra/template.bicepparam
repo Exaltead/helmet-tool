@@ -1,4 +1,4 @@
 using './main.bicep'
 
-param appName = 'haastest'
+param appName = 'SETME'
 param clientSecret = 'SETME'

@@ -7,10 +7,10 @@ param clientSecret string
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var location = resourceGroup().location
 var funcAppName = '${appName}-func-${uniqueSuffix}'
-var hostingAccountName = '${appName}hs${uniqueSuffix}'
+var hostingAccountName = substring('${appName}hs${uniqueSuffix}', 0, 23)
 
 resource keyVault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
-  name: 'kv${appName}${uniqueSuffix}'
+  name: substring('kv${appName}${uniqueSuffix}', 0, 23)
   location: location
   properties: {
     sku: {
@@ -66,7 +66,7 @@ resource databaseAccount 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-previ
     }
     locations: [
       {
-        locationName: 'North Europe'
+        locationName: location
         failoverPriority: 0
         isZoneRedundant: false
       }
@@ -384,7 +384,6 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
     dailyMemoryTimeQuota: appMemGBQuota
     keyVaultReferenceIdentity: funcAppIdentity.id
     siteConfig: {
-      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
       cors: {
 #disable-next-line BCP329
         allowedOrigins: [substring(hostingStorageAccount.properties.primaryEndpoints.web, 0, length(hostingStorageAccount.properties.primaryEndpoints.web) - 1) ]
@@ -393,7 +392,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet-isolated'
+          value: 'custom'
         }
         {
           name: 'AzureWebJobsStorage'
@@ -411,14 +410,13 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
           value: '${hostingStorageAccount.properties.primaryEndpoints.blob}${backendContainer.name}/app.zip'
         }
-        { name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED', value: '0' }
         {
-          name: 'CosmosDbConnectionString'
+          name: 'COSMOS_CONNECTION_STRING'
           value: listConnectionStrings(databaseAccount.id, '2019-12-12').connectionStrings[0].connectionString
         }
-        { name: 'DatabaseName', value: databaseStorage.name }
+        { name: 'DATABASE_NAME', value: databaseStorage.name }
         {
-          name: 'SecretKey'
+          name: 'SECRET_KEY'
           value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${keyVault::clientSecretKey.name})'
         }
         { name: 'APPLICATIONINSIGHTS_INSTRUMENTATIONKEY', value: applicationInsights.properties.InstrumentationKey }

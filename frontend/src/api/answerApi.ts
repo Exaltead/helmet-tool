@@ -25,24 +25,22 @@ export async function getAnswer(
   }
 
   const data = await resp.json()
-  const schema = z.object({
-    answers: z
-      .object({
-        id: z.string().uuid().optional(),
-        answers: answerSchema.array(),
-      })
-      .array(),
-  })
+  const schema = z
+    .object({
+      id: z.string().uuid().optional(),
+      answers: answerSchema.array(),
+    })
+    .array()
 
-  const content = schema.parse(data)
+  const answers = schema.parse(data)
 
-  if (content.answers.length === 0) {
+  if (answers.length === 0) {
     return { answers: [] }
   }
-  if (content.answers.length !== 1) {
+  if (answers.length !== 1) {
     throw new Error("Invalid answer data")
   }
-  return content.answers[0]
+  return answers[0]
 }
 
 export async function getChallengeAnswers(challengeId: string): Promise<Answer[]> {
@@ -57,9 +55,15 @@ export async function getChallengeAnswers(challengeId: string): Promise<Answer[]
 
   const data = await resp.json()
 
-  const content = answerSchema.array().parse(data)
+  const content = z
+    .object({
+      id: z.string().uuid(),
+      answers: answerSchema.array(),
+    })
+    .array()
+    .parse(data)
 
-  return content
+  return content.flatMap((t) => t.answers)
 }
 
 export async function addAnswer(
@@ -88,7 +92,7 @@ export async function updateAnswer(
   challengeId: string,
   itemId: string,
 ): Promise<void> {
-  const resp = await fetch(`${API_URL}/answer`, {
+  const resp = await fetch(`${API_URL}/answer/${id}`, {
     method: "PUT",
     headers: getHeaders(),
     body: JSON.stringify({ id, challengeId, itemId, answers }),

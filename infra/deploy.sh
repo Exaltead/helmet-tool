@@ -1,1 +1,0 @@
-az deployment group create --resource-group haasteikkotesting --template-file main.bicep --parameters stg.bicepparam

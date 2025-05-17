@@ -11,6 +11,7 @@ const libraryBookSchema = z.object({
 })
 
 const libraryItemSchema = z.object({
+  kind: z.literal("Book"),
   id: z.string(),
   book: libraryBookSchema.optional(),
   activatedChallengeIds: z.string().array(),
@@ -60,6 +61,7 @@ export async function fetchLibraryItems(): Promise<Entry[]> {
 export async function addLibraryItem(item: Omit<Entry, "id">): Promise<string | undefined> {
   try {
     const newLibraryItem: NewApiLibraryItem = {
+      kind: "Book",
       book: {
         title: item.name,
         author: item.author,
@@ -105,6 +107,7 @@ export async function deleteLibraryItem(id: string): Promise<void> {
 
 export async function updateLibraryItem(item: Entry): Promise<void> {
   const apiItem: ApiLibraryItem = {
+    kind: "Book",
     id: item.id,
     book: {
       title: item.name,
@@ -116,7 +119,7 @@ export async function updateLibraryItem(item: Entry): Promise<void> {
 
   const validatedItem = libraryItemSchema.parse(apiItem)
   const body = JSON.stringify(validatedItem)
-  const resp = await fetch(`${API_URL}/library`, {
+  const resp = await fetch(`${API_URL}/library/${item.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -131,18 +134,18 @@ export async function updateLibraryItem(item: Entry): Promise<void> {
 }
 
 export async function fetchLibraryItem(id: string): Promise<Entry> {
-  const resp = await fetch(`${API_URL}/library?itemId=${id}`, {
+  const resp = await fetch(`${API_URL}/library/${id}`, {
     method: "GET",
     headers: getHeaders(),
   })
   if (!resp.ok) {
     throw new Error("Failed to fetch library item")
   }
-  const data: ApiLibraryItem[] = libraryItemSchema.array().parse(await resp.json())
-  const selected = data[0]
-  if (selected === undefined) {
+  const data: ApiLibraryItem | undefined  = libraryItemSchema.optional().parse(await resp.json())
+
+  if (data === undefined) {
     throw new Error("Item not found")
   }
 
-  return mapApiLibraryItem(selected)
+  return mapApiLibraryItem(data)
 }

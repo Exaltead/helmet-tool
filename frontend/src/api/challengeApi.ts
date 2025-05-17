@@ -22,7 +22,7 @@ export async function fetchChallenges(): Promise<Challenge[]> {
   }
 
   const data = await resp.json()
-  return z.object({ challenges: challengeSchema.array() }).parse(data).challenges
+  return challengeSchema.array().parse(data)
 }
 
 export async function addChallenge(challenge: Challenge): Promise<void> {
@@ -38,7 +38,7 @@ export async function addChallenge(challenge: Challenge): Promise<void> {
 }
 
 export async function updateChallenge(challenge: Challenge): Promise<void> {
-  const resp = await fetch(`${API_URL}/challenge`, {
+  const resp = await fetch(`${API_URL}/challenge/${challenge.id}`, {
     method: "PUT",
     headers: getHeaders(),
     body: JSON.stringify(challenge),

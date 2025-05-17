@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "infra"
+		},
+		{
+			"path": "backend"
 		}
 	],
 	"settings": {

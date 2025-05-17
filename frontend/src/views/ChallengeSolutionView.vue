@@ -176,7 +176,6 @@ function getQuestionAnswers(question: Question): Answer[] {
 }
 
 const questionToAnswersMap = computed(() => {
-  console.log("questionToAnswersMap", questions.value, allAnswers.value)
   const mapping = questions.value.map((question) => {
     const answers = getQuestionAnswers(question)
       .map(answer => {
@@ -196,7 +195,6 @@ const questionToAnswersMap = computed(() => {
     }
   })
 
-  console.log("mapping", mapping)
   return mapping.sort((a, b) => a.question.number - b.question.number)
 })
 
