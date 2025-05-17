@@ -65,7 +65,7 @@ jobs:
 
       - name: Build frontend
         env: 
-          VITE_API_URL: 'https://${{ secrets.VITE_API_URL }}.azurewebsites.net/api'
+          VITE_API_URL: 'https://${{ env.AZURE_STORAGE_ACCOUNT_NAME }}.azurewebsites.net/api'
         run: |
           cd frontend
           npm ci
