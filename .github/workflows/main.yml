@@ -25,6 +25,7 @@ jobs:
           go mod download
           go mod tidy
           GOOS=linux GOARCH=amd64 go build -o backend
+          mkdir -p deployment
           mv backend deployment/backend
           cp -r api deployment/
           cp host.json deployment/host.json
