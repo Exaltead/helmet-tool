@@ -280,6 +280,14 @@ resource backendContainer 'Microsoft.Storage/storageAccounts/blobServices/contai
   }
 }
 
+resource flexBackendContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' = {
+  parent: hostingStorageAccountBlobService
+  name: 'flexbackend'
+  properties: {
+    publicAccess: 'None'
+  }
+}
+
 resource webContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' = {
   parent: hostingStorageAccountBlobService
   name: '$web'
@@ -385,8 +393,15 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
     keyVaultReferenceIdentity: funcAppIdentity.id
     siteConfig: {
       cors: {
-#disable-next-line BCP329
-        allowedOrigins: [substring(hostingStorageAccount.properties.primaryEndpoints.web, 0, length(hostingStorageAccount.properties.primaryEndpoints.web) - 1) ]
+        #disable-next-line BCP329
+        allowedOrigins: [
+          substring(
+            hostingStorageAccount.properties.primaryEndpoints.web,
+            0,
+            #disable-next-line BCP329
+            length(hostingStorageAccount.properties.primaryEndpoints.web) - 1
+          )
+        ]
       }
       appSettings: [
         { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' }
@@ -428,5 +443,95 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         { name: 'WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID', value: funcAppIdentity.id }
       ]
     }
+  }
+}
+
+resource flexPlan 'Microsoft.Web/serverfarms@2024-04-01' = {
+  name: '${appName}-plan-flex-${uniqueSuffix}'
+  location: location
+  kind: 'functionapp,linux'
+  sku: {
+    tier: 'FlexConsumption'
+    name: 'FC1'
+  }
+  properties: {
+    reserved: true
+  }
+}
+
+resource flexFunctionApp 'Microsoft.Web/sites@2024-04-01' = {
+  name: '${appName}-flex-api-${uniqueSuffix}'
+  location: location
+  kind: 'functionapp,linux'
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    reserved: true
+    serverFarmId: flexPlan.id
+    httpsOnly: true
+    //keyVaultReferenceIdentity: funcAppIdentity.id
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage__accountName'
+          value: hostingStorageAccount.name
+        }
+        {
+          name: 'COSMOS_CONNECTION_STRING'
+          value: listConnectionStrings(databaseAccount.id, '2019-12-12').connectionStrings[0].connectionString
+        }
+        { name: 'DATABASE_NAME', value: databaseStorage.name }
+        {
+          name: 'SECRET_KEY'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${keyVault::clientSecretKey.name})'
+        }
+        /*{ name: 'APPLICATIONINSIGHTS_INSTRUMENTATIONKEY', value: applicationInsights.properties.InstrumentationKey }
+        {
+          name: 'APPLICATIONINSIGHTS_AUTHENTICATION_STRING'
+          value: 'ClientId=${funcAppIdentity.properties.clientId};Authorization=AAD'
+        }*/
+        { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: applicationInsights.properties.ConnectionString }
+      ]
+    }
+    functionAppConfig: {
+      scaleAndConcurrency: {
+        maximumInstanceCount: 40
+        instanceMemoryMB: 2048
+      }
+      runtime: {
+        name: 'custom'
+        version: '1.0'
+      }
+      deployment: {
+        storage: {
+          type: 'blobContainer'
+          value: '${hostingStorageAccount.properties.primaryEndpoints.blob}${flexBackendContainer.name}'
+          authentication: { type: 'SystemAssignedIdentity' }
+        }
+      }
+    }
+  }
+}
+
+resource flexAppToKeyVault 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, flexFunctionApp.id, 'Key Vault Secrets User')
+  scope: keyVault
+  properties: {
+    principalId: flexFunctionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: keyVaultRoleDefinition.id
+  }
+}
+
+var storageRoleDefinitionId = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' //Storage Blob Data Owner role
+
+resource flexAppToStorageAccount 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: hostingStorageAccount
+  name: guid(flexFunctionApp.id, hostingStorageAccount.id, 'Storage Blob Data Owner')
+  properties: {
+    principalId: flexFunctionApp.identity.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', storageRoleDefinitionId)
+    principalType: 'ServicePrincipal'
   }
 }
