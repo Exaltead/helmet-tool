@@ -1,9 +1,18 @@
 @import 'tailwindcss';
 
 @theme{
+    --color-brand-orange: #FFA89E;
+    --color-brand-light-orange: #FFEAE5;
+    --color-brand-rock: #444444;
     --color-brand-primary: #FFA89E;
     --color-light-gray: rgb(249, 248, 246);
     --color-text-primary: #121212;
     --color-text-disabled: #525252;
     --color-brand-disabled: #FFEAE5;
+}
+
+@layer components {
+    .card {
+        @apply bg-white shadow-lg rounded
+    }
 }
