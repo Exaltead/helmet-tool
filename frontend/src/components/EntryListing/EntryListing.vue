@@ -44,16 +44,12 @@ function closeModals(): void {
   showDialog.value = false
 }
 
-
 </script>
 
 <template>
   <div>
-    <div class="ml-10 flex flex-col">
-      <div class="flex flex-row gap-10">
-        <h1 class="text-brand-primary text-bold text-lg">Luetut kirjat</h1>
-        <Button hidden :onClick="openNewEntryDialog" text="Uusi kirja"></Button>
-      </div>
+    <div class="flex flex-col">
+
 
 
       <div class="flex gap-4 mt-6 flex-wrap">
@@ -63,13 +59,9 @@ function closeModals(): void {
           </button>
         </div>
 
-        <div v-for="entry in listItems" :key="entry.id" >
-          <RouterLink :to="{ name: 'libraryItem', params: { id: entry.id } }">
-            <LibraryItemCard :item="entry" />
-          </RouterLink>
+        <LibraryItemCard v-for="entry in listItems" :key="entry.id" :item="entry" />
 
 
-        </div>
       </div>
 
     </div>
