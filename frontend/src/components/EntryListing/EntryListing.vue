@@ -2,7 +2,7 @@
 
 import { computed, ref } from "vue"
 import Button from "@/components/basics/BrandedButton.vue"
-import EditEntryModal from "@/components/EntryListing/NewEntryModal.vue"
+import EditEntryModal from "@/components/EntryListing/NewItemModal.vue"
 import type { Entry } from "@/models/entry"
 import IconPlus from "@/components/icons/IconPlus.vue"
 import { RouterLink, useRouter } from "vue-router"
@@ -48,21 +48,8 @@ function closeModals(): void {
 
 <template>
   <div>
-    <div class="flex flex-col">
-
-
-
-      <div class="flex gap-4 mt-6 flex-wrap">
-        <div class="bg-brand-primary w-30 rounded">
-          <button class="w-full h-full flex justify-center cursor-pointer" :onClick="openNewEntryDialog">
-            <IconPlus class="w-20 text-white"></IconPlus>
-          </button>
-        </div>
-
+    <div class="grid md:grid-cols-2 w-full gap-3">
         <LibraryItemCard v-for="entry in listItems" :key="entry.id" :item="entry" />
-
-
-      </div>
 
     </div>
 

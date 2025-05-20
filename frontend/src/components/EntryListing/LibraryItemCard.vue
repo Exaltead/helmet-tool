@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import IconedText from '@/components/basics/IconedText.vue';
-import IconBook from '../icons/IconBook.vue';
 import IconFavoriteEmpty from '../icons/IconFavoriteEmpty.vue';
 import type { Entry } from '@/models/entry';
 import IconChevronRight from '../icons/IconChevronRight.vue';
@@ -21,7 +20,7 @@ defineProps<{
     <div class="flex flex-row justify-between items-center w-full px-2.5">
       <div class="flex flex-col justify-start w-full h-fit gap-2">
         <IconedText :text="item.author" icon-name="Author" :heading="false" />
-        <IconedText v-if="item.translator" :text="item.translator" :icon-name="'Book'" :heading="false" />
+        <IconedText v-if="item.translator" :text="item.translator" :icon-name="'Translator'" :heading="false" />
       </div>
       <RouterLink :to="{ name: 'libraryItem', params: { id: item.id } }">
         <IconChevronRight class="text-brand-orange h-[30px] w-[30px]" />

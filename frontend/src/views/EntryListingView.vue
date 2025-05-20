@@ -1,10 +1,27 @@
 <script setup lang="ts">
-import IconPlus from '@/components/icons/IconPlus.vue';
 import EntryListing from '../components/EntryListing/EntryListing.vue'
 import BrandedButton from '@/components/basics/BrandedButton.vue';
+import NewItemModal from "@/components/EntryListing/NewItemModal.vue"
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter()
 
 function createNew() {
-  console.log("Creating new entry");
+  showDialog.value = true
+}
+
+const showDialog = ref(false)
+
+function onNewItemSubmitComplete(id: string): void {
+  showDialog.value = false
+
+  router.push({ name: "libraryItem", params: { id } })
+}
+
+function closeModal(): void {
+  showDialog.value = false
 }
 
 </script>
@@ -14,15 +31,14 @@ function createNew() {
     <div>
 
     </div>
-    <div class="flex flex-col gap-1 w-full h-full">
-      <div class="flex flex-row justify-start items-center py-2 px-1.5">
+    <div class="flex flex-col gap-3 w-full h-full md:px-15">
+      <div class="flex flex-row justify-start items-center py-2 px-1.5 mt-2">
         <BrandedButton text="Lisää uusi" :onClick="createNew" icon="plus"
           :styling="{ isPill: true, backgroundColor: 'warm-white', bold: true }" />
       </div>
 
-
-
-      <EntryListing class="px-1" />
+      <EntryListing class="px-1 " />
+      <NewItemModal :is-modal-open="showDialog" @submitComplete="onNewItemSubmitComplete" @close="closeModal" />
     </div>
 
 
