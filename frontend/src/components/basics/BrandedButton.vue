@@ -1,38 +1,89 @@
 <script lang="ts" setup>
 import IconBack from "@/components/icons/IconBack.vue"
 import IconDelete from "@/components/icons/IconDelete.vue"
+import IconPlus from "@/components/icons/IconPlus.vue"
+import type { IconName } from "@/models/iconName"
+import CustomIcon from "./CustomIcon.vue"
+import { computed } from "vue"
+import LoadingSpinner from "./LoadingSpinner.vue"
 
-type IconName = "back" | "delete"
 
-defineProps<{
+type ButtonStyle = {
+  isPill?: boolean
+  backgroundColor?: "primary" | "warm-white"
+  bold?: boolean
+  iconColor?: string
+}
+
+const props = defineProps<{
   onClick: () => void
   text?: string
   isSubmitting?: boolean
   icon?: IconName
   disabled?: boolean
+  styling?: ButtonStyle
 }>()
 
-function createButtonStyle(disabled: boolean){
-  return disabled
-    ? "bg-brand-disabled text-text-disabled cursor-not-allowed py-1 px-2"
-    : "bg-brand-primary text-text-primary font-bold rounded cursor-pointer py-1 px-2"
+const backgroundColor = computed(() => {
+  if (props.styling?.backgroundColor) {
+    if (props.styling?.backgroundColor === "warm-white") {
+      return "bg-brand-warm-white"
+    }
+    return "bg-brand-primary"
+  }
+  if (props.disabled) {
+    return "bg-brand-disabled"
+  }
+  return "bg-brand-primary"
+})
+
+function createButtonStyle(disabled: boolean, style: ButtonStyle | undefined) {
+  let baseStyle = "py-1 pl-2 pr-3"
+
+
+  baseStyle = baseStyle + " " + backgroundColor.value
+
+  if (style?.isPill) {
+    baseStyle = baseStyle + " rounded-full border border-brand-black"
+  } else {
+    baseStyle = baseStyle + " rounded border border-brand-black"
+  }
+
+  if (disabled) {
+    if (!style?.backgroundColor) {
+      baseStyle = baseStyle + " bg-brand-disabled"
+    }
+    baseStyle = baseStyle + " cursor-not-allowed text-text-disabled"
+  } else {
+    baseStyle = baseStyle + " cursor-pointer text-black"
+  }
+  if (style?.bold) {
+    baseStyle = baseStyle + " font-bold"
+  }
+
+  return baseStyle
 }
+
+const iconStyle = computed(() => {
+  let baseStyle = 'w-[22px] h-fit'
+  if (props.styling?.iconColor) {
+    return baseStyle + ' ' + props.styling.iconColor
+  }
+  return baseStyle + " text-brand-primary"
+})
+
+
 
 </script>
 
 <template>
-  <button @click="onClick" :class="createButtonStyle(disabled ??false)" type="button" :disabled="disabled">
-    <div class="flex flex-row gap-2 items-center">
-      <div v-if="isSubmitting"
-        class="bg-brand-primary text-text-primary mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
+  <button @click="onClick" :class="createButtonStyle(disabled ?? false, styling)" type="button" :disabled="disabled">
+    <div class="flex flex-row gap-2 items-center justify-start">
+      <div v-if="isSubmitting">
+        <LoadingSpinner :background-color="backgroundColor" />
       </div>
-      <div v-if="icon && icon === 'back'">
-        <IconBack class="text-text-primary w-4 h-fit" />
-      </div>
-      <div v-if="icon && icon === 'delete'">
-        <IconDelete class="text-text-primary w-4 h-fit" />
-      </div>
-      <span v-if="text" class="px-4">{{ text }}</span>
+      <CustomIcon v-if="icon && !isSubmitting" :name="icon" :class="iconStyle" />
+      <span v-if="text" class="text-black text-nowrap text-center">{{ text }}</span>
     </div>
   </button>
 </template>

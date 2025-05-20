@@ -8,7 +8,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime"
+
 	//"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
 )
@@ -106,12 +108,18 @@ func QuerySingle[T any](containerName string, id string, partitionKey string) (T
 
 	resp, err := container.ReadItem(context.TODO(), partitionKeyValue, id, nil)
 
-	if err != nil || resp.RawResponse.StatusCode != 200 {
-		if resp.RawResponse.StatusCode == 404 {
+	if err != nil {
+		var err2 *azcore.ResponseError
+		if errors.As(err, &err2) {
 			return *new(T), errors.New("item not found")
 		}
+
 		log.Default().Println("Failed to read item", err)
 		return *new(T), fmt.Errorf("failed to read a item %v", err)
+	}
+
+	if resp.RawResponse.StatusCode == 404 {
+		return *new(T), errors.New("item not found")
 	}
 
 	item := new(T)
