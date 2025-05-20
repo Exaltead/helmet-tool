@@ -137,7 +137,7 @@ func deleteItemFromLibrary[T UserContent](w http.ResponseWriter, r *http.Request
 	if err := routeConfig.Repository.DeleteById(id, userId); err != nil {
 		http.Error(w, "Failed to delete item"+err.Error(), 500)
 	} else {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
