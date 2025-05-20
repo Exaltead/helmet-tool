@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Modal from '@/components/basics/PopupModal.vue';
 import type { Book } from '@/models/entry';
-import Button from '@/components/basics/BrandedButton.vue';
-import { ref } from 'vue'
+import BrandedButton from '@/components/basics/BrandedButton.vue';
+import { computed, ref } from 'vue'
 import TextInput from "@/components/basics/TextInput.vue"
 import { addLibraryItem } from '@/api/libraryApi';
 
@@ -31,6 +31,13 @@ const newBookBase: NewBook = {
 const model = ref<NewBook>({ ...newBookBase })
 
 const isSubmitting = ref(false)
+
+const isInvalidValid = computed(() => {
+  const hasName = model.value.name.length > 0
+  const hasAuthor = model.value.author.length > 0
+
+  return !(hasName && hasAuthor)
+})
 
 
 function closeModal(): void {
@@ -69,12 +76,22 @@ async function submitModal(): Promise<void> {
   <Modal :show-modal="isModalOpen">
     <form>
       <div class="flex flex-col gap-4 p-4">
-        <TextInput name="name" label="Nimi" v-model="model.name" />
-        <TextInput name="author" label="Kirjailija" :required="true" v-model="model.author" />
-        <TextInput name="translator" label="Kääntäjä" :required="false" v-model="model.translator" />
-        <div class="flex flex-row justify-between py-2">
-          <Button :onClick="closeModal" text="Peru"></Button>
-          <Button :onClick="submitModal" text="Tallenna"></Button>
+        <TextInput name="name" label="Nimi" v-model="model.name" icon="Book" />
+        <TextInput name="author" label="Kirjailija" :required="true" v-model="model.author" icon="Author" />
+        <TextInput name="translator" label="Kääntäjä" :required="false" v-model="model.translator" icon="Translator" />
+        <div class="flex flex-row justify-between py-2 gap-3">
+          <BrandedButton :onClick="closeModal" text="Peru" icon="Cross" :styling="{
+            isPill: true,
+            bold: true,
+            iconColor: 'text-white'
+          }" />
+          <BrandedButton :onClick="submitModal" :disabled="isInvalidValid" text="Tallenna"
+            icon="Check"
+            :styling="{
+            isPill: true,
+            bold: true,
+            iconColor: 'text-white'
+          }" />
         </div>
       </div>
     </form>

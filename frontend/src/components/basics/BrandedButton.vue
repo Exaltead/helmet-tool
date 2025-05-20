@@ -2,16 +2,19 @@
 import IconBack from "@/components/icons/IconBack.vue"
 import IconDelete from "@/components/icons/IconDelete.vue"
 import IconPlus from "@/components/icons/IconPlus.vue"
+import type { IconName } from "@/models/iconName"
+import CustomIcon from "./CustomIcon.vue"
+import { computed } from "vue"
 
-type IconName = "back" | "delete" | "plus"
 
 type ButtonStyle = {
   isPill?: boolean
   backgroundColor?: "primary" | "warm-white"
   bold?: boolean
+  iconColor?: string
 }
 
-defineProps<{
+const props = defineProps<{
   onClick: () => void
   text?: string
   isSubmitting?: boolean
@@ -51,6 +54,14 @@ function createButtonStyle(disabled: boolean, style: ButtonStyle | undefined) {
   return baseStyle
 }
 
+const iconStyle = computed(() => {
+  let baseStyle = 'w-[22px] h-fit'
+  if (props.styling?.iconColor) {
+    return baseStyle + ' ' + props.styling.iconColor
+  }
+  return baseStyle + " text-brand-primary"
+})
+
 </script>
 
 <template>
@@ -59,15 +70,7 @@ function createButtonStyle(disabled: boolean, style: ButtonStyle | undefined) {
       <div v-if="isSubmitting"
         class="bg-brand-primary text-text-primary mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
       </div>
-      <div v-if="icon && icon === 'plus'">
-        <IconPlus class="text-brand-primary w-[22px] h-fit" />
-      </div>
-      <div v-if="icon && icon === 'back'">
-        <IconBack class="text-text-primary w-[22px] h-fit" />
-      </div>
-      <div v-if="icon && icon === 'delete'">
-        <IconDelete class="text-text-primary w-[22px] h-fit" />
-      </div>
+      <CustomIcon v-if="icon" :name="icon" :class="iconStyle" />
       <span v-if="text" class="text-black text-nowrap text-center">{{ text }}</span>
     </div>
   </button>

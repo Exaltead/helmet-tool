@@ -33,7 +33,7 @@ function closeModal(): void {
     </div>
     <div class="flex flex-col gap-3 w-full h-full md:px-15">
       <div class="flex flex-row justify-start items-center py-2 px-1.5 mt-2">
-        <BrandedButton text="Lisää uusi" :onClick="createNew" icon="plus"
+        <BrandedButton text="Lisää uusi" :onClick="createNew" icon="Plus"
           :styling="{ isPill: true, backgroundColor: 'warm-white', bold: true }" />
       </div>
 
