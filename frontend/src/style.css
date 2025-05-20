@@ -2,13 +2,17 @@
 
 @theme{
     --color-brand-orange: #FFA89E;
-    --color-brand-light-orange: #FFEAE5;
-    --color-brand-rock: #444444;
+    --color-brand-very-light-orange: #FFF3F0;
+    --color-brand-disabled-orange: #FFDDD5;
+    
+    --color-brand-warm-white: #FFFAED;
     --color-brand-primary: #FFA89E;
     --color-light-gray: rgb(249, 248, 246);
     --color-text-primary: #121212;
     --color-text-disabled: #525252;
     --color-brand-disabled: #FFEAE5;
+    --color-brand-primary: #FFA89E;
+    --color-brand-black: #444444;
 }
 
 @layer components {
