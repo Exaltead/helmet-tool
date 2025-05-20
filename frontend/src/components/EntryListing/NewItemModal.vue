@@ -36,7 +36,7 @@ const isInvalidValid = computed(() => {
   const hasName = model.value.name.length > 0
   const hasAuthor = model.value.author.length > 0
 
-  return !(hasName && hasAuthor)
+  return !(hasName && hasAuthor) || isSubmitting.value
 })
 
 
@@ -85,13 +85,12 @@ async function submitModal(): Promise<void> {
             bold: true,
             iconColor: 'text-white'
           }" />
-          <BrandedButton :onClick="submitModal" :disabled="isInvalidValid" text="Tallenna"
-            icon="Check"
-            :styling="{
-            isPill: true,
-            bold: true,
-            iconColor: 'text-white'
-          }" />
+          <BrandedButton :onClick="submitModal" :disabled="isInvalidValid" text="Tallenna" icon="Check"
+            :is-submitting="isSubmitting" :styling="{
+              isPill: true,
+              bold: true,
+              iconColor: 'text-white'
+            }" />
         </div>
       </div>
     </form>

@@ -5,6 +5,7 @@ import IconPlus from "@/components/icons/IconPlus.vue"
 import type { IconName } from "@/models/iconName"
 import CustomIcon from "./CustomIcon.vue"
 import { computed } from "vue"
+import LoadingSpinner from "./LoadingSpinner.vue"
 
 
 type ButtonStyle = {
@@ -23,15 +24,24 @@ const props = defineProps<{
   styling?: ButtonStyle
 }>()
 
+const backgroundColor = computed(() => {
+  if (props.styling?.backgroundColor) {
+    if (props.styling?.backgroundColor === "warm-white") {
+      return "bg-brand-warm-white"
+    }
+    return "bg-brand-primary"
+  }
+  if (props.disabled) {
+    return "bg-brand-disabled"
+  }
+  return "bg-brand-primary"
+})
+
 function createButtonStyle(disabled: boolean, style: ButtonStyle | undefined) {
   let baseStyle = "py-1 pl-2 pr-3"
 
-  let backgroundColor = "bg-brand-primary"
-  if (style?.backgroundColor === "warm-white") {
-    backgroundColor = "bg-brand-warm-white"
-  }
 
-  baseStyle = baseStyle + " " + backgroundColor
+  baseStyle = baseStyle + " " + backgroundColor.value
 
   if (style?.isPill) {
     baseStyle = baseStyle + " rounded-full border border-brand-black"
@@ -62,15 +72,17 @@ const iconStyle = computed(() => {
   return baseStyle + " text-brand-primary"
 })
 
+
+
 </script>
 
 <template>
   <button @click="onClick" :class="createButtonStyle(disabled ?? false, styling)" type="button" :disabled="disabled">
     <div class="flex flex-row gap-2 items-center justify-start">
-      <div v-if="isSubmitting"
-        class="bg-brand-primary text-text-primary mr-3 size-5 animate-spin rounded-full border-4 border-white border-t-transparent">
+      <div v-if="isSubmitting">
+        <LoadingSpinner :background-color="backgroundColor" />
       </div>
-      <CustomIcon v-if="icon" :name="icon" :class="iconStyle" />
+      <CustomIcon v-if="icon && !isSubmitting" :name="icon" :class="iconStyle" />
       <span v-if="text" class="text-black text-nowrap text-center">{{ text }}</span>
     </div>
   </button>
