@@ -123,7 +123,7 @@ function onChallengeStateChanged(challengeIds: string[]) {
         </div>
         <div class="flex flex-row gap-2 align-top justify-start">
           <Button :onClick="enableEditMode" text="Muokkaa" :isSubmitting="isSubmitting"></Button>
-          <Button :onClick="deleteItem" text="Poista" icon="delete" :isSubmitting="isDeleting"></Button>
+          <Button :onClick="deleteItem" text="Poista" icon="Delete" :isSubmitting="isDeleting"></Button>
         </div>
       </div>
 

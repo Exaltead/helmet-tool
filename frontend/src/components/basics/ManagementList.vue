@@ -53,7 +53,7 @@ const currentOptions = computed(() => {
           <span class="">
             {{ item.display }}
           </span>
-          <BrandedButton icon="delete" :onClick="() => onDelete(item.value)" />
+          <BrandedButton icon="Delete" :onClick="() => onDelete(item.value)" />
         </div>
       </li>
     </ul>
