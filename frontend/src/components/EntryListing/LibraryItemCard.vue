@@ -40,15 +40,18 @@ async function updateItemFavorite(): Promise<void> {
       </button>
 
     </div>
-    <div class="flex flex-row justify-between items-center w-full px-2.5">
-      <div class="flex flex-col justify-start w-full h-fit gap-2">
-        <IconedText :text="item.author" icon-name="Author" :heading="false" />
-        <IconedText v-if="item.translator" :text="item.translator" :icon-name="'Translator'" :heading="false" />
-      </div>
-      <RouterLink :to="{ name: 'libraryItem', params: { id: item.id } }">
+    <RouterLink :to="{ name: 'libraryItem', params: { id: item.id } }" class="w-full">
+      <div class="flex flex-row justify-between items-center w-full px-2.5">
+
+        <div class="flex flex-col justify-start w-full h-fit gap-2">
+          <IconedText :text="item.author" icon-name="Author" :heading="false" />
+          <IconedText v-if="item.translator" :text="item.translator" :icon-name="'Translator'" :heading="false" />
+        </div>
+
         <IconChevronRight class="text-brand-orange h-[30px] w-[30px]" />
-      </RouterLink>
-    </div>
+
+      </div>
+    </RouterLink>
 
   </div>
 
