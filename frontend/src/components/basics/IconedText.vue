@@ -15,10 +15,10 @@ defineProps<{ text: string, iconName: IconName, heading: boolean }>();
     <IconBook v-if="iconName === 'Book'" class="text-brand-orange" />
     <IconAuthor v-else-if="iconName === 'Author'" class="text-brand-orange" />
     <IconTranslator v-else-if="iconName === 'Translator'" class="text-brand-orange" />
-    <div v-if="heading" class="text-brand-rock text-lg font-bold">
+    <div v-if="heading" class="text-brand-rock text-lg font-bold wrap-anywhere">
       {{ text }}
     </div>
-    <div v-else class="text-brand-rock text-sm font-normal">
+    <div v-else class="text-brand-rock text-sm font-normal wrap-anywhere">
       {{ text }}
     </div>
   </div>
