@@ -15,6 +15,7 @@ type LibraryItem struct {
 	AddDate               time.Time    `json:"addDate"`
 	ActivatedChallengeIds []string     `json:"activatedChallengeIds"`
 	Book                  *LibraryBook `json:"book,omitempty"`
+	Favorite              bool         `json:"favorite"`
 }
 
 func (l LibraryItem) GetId() string {

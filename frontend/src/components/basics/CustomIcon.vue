@@ -8,6 +8,8 @@ import IconPlus from "@/components/icons/IconPlus.vue"
 import type { IconName } from '@/models/iconName';
 import IconCross from '../icons/IconCross.vue';
 import IconCheck from '../icons/IconCheck.vue';
+import IconFavoriteEmpty from '../icons/IconFavoriteEmpty.vue';
+import IconFavoriteSelected from '../icons/IconFavoriteSelected.vue';
 
 defineProps<{
   name: IconName
@@ -25,5 +27,7 @@ defineProps<{
   <IconDelete v-else-if="name === 'Delete'" />
   <IconCross v-else-if="name === 'Cross'" />
   <IconCheck v-else-if="name === 'Check'" />
+  <IconFavoriteEmpty v-else-if="name === 'HeartEmpty'" />
+  <IconFavoriteSelected v-else-if="name === 'HeartFull'" />
 
 </template>

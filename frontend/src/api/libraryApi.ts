@@ -15,6 +15,7 @@ const libraryItemSchema = z.object({
   id: z.string(),
   book: libraryBookSchema.optional(),
   activatedChallengeIds: z.string().array(),
+  favorite: z.boolean()
 })
 
 type ApiLibraryItem = z.infer<typeof libraryItemSchema>
@@ -38,6 +39,7 @@ function mapApiLibraryItem(item: ApiLibraryItem): Entry {
       author: item.book!.author,
       translator: item.book?.translator ? item.book?.translator : undefined,
       activatedChallengeIds: item.activatedChallengeIds,
+      favorite: item.favorite,
     }
   }
   throw new Error("Item type not supported yet")
@@ -68,6 +70,7 @@ export async function addLibraryItem(item: Omit<Entry, "id">): Promise<string | 
         translator: item.translator,
       },
       activatedChallengeIds: item.activatedChallengeIds,
+      favorite: item.favorite,
     }
 
     const validatedItem = newApiLibraryItemSchema.parse(newLibraryItem)
@@ -115,6 +118,7 @@ export async function updateLibraryItem(item: Entry): Promise<void> {
       translator: item.translator,
     },
     activatedChallengeIds: item.activatedChallengeIds,
+    favorite: item.favorite,
   }
 
   const validatedItem = libraryItemSchema.parse(apiItem)

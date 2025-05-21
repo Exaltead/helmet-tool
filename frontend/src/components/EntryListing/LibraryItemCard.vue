@@ -3,10 +3,29 @@ import IconedText from '@/components/basics/IconedText.vue';
 import IconFavoriteEmpty from '../icons/IconFavoriteEmpty.vue';
 import type { Entry } from '@/models/entry';
 import IconChevronRight from '../icons/IconChevronRight.vue';
+import { updateLibraryItem } from '@/api/libraryApi';
+import CustomIcon from '../basics/CustomIcon.vue';
+import { ref } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   item: Entry
 }>()
+
+const favorite = ref<boolean>(props.item.favorite)
+
+const emit = defineEmits<{
+  (e: "itemUpdated"): void
+}>()
+
+async function updateItemFavorite(): Promise<void> {
+  favorite.value = !favorite.value
+  const newItem = { ...props.item }
+  newItem.favorite = !props.item.favorite
+
+
+  await updateLibraryItem(newItem)
+  emit("itemUpdated")
+}
 
 </script>
 
@@ -15,7 +34,11 @@ defineProps<{
     <div v-if="item.kind === 'Book'"
       class="flex flex-row justify-between items-center w-full px-2.5 py-1 border-b border-brand-orange">
       <IconedText :text="item.name" :icon-name="'Book'" :heading="true" />
-      <IconFavoriteEmpty class="text-brand-orange" />
+      <button @click="updateItemFavorite" class="cursor-pointer">
+        <CustomIcon v-if="favorite" name="HeartFull" class="text-brand-orange" />
+        <CustomIcon v-else name="HeartEmpty" class="text-brand-orange" />
+      </button>
+
     </div>
     <div class="flex flex-row justify-between items-center w-full px-2.5">
       <div class="flex flex-col justify-start w-full h-fit gap-2">

@@ -5,6 +5,7 @@ export type Book = {
   author: string
   translator?: string
   activatedChallengeIds: string[]
+  favorite: boolean
 }
 
 export type Entry = Book

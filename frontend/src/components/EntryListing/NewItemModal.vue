@@ -52,6 +52,7 @@ async function submitModal(): Promise<void> {
     author: model.value.author,
     translator: model.value.translator,
     activatedChallengeIds: [],
+    favorite: false
   }
 
 
