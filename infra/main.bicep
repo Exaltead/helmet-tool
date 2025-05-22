@@ -350,7 +350,7 @@ resource flexFunctionApp 'Microsoft.Web/sites@2024-04-01' = {
         }
         {
           name: 'COSMOS_CONNECTION_STRING'
-          value: databaseAccount.listKeys().primaryMasterKey
+          value: listConnectionStrings(databaseAccount.id, '2019-12-12').connectionStrings[0].connectionString
         }
         { name: 'DATABASE_NAME', value: databaseStorage.name }
         {
@@ -358,7 +358,6 @@ resource flexFunctionApp 'Microsoft.Web/sites@2024-04-01' = {
           value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${keyVault::clientSecretKey.name})'
         }
         { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: applicationInsights.properties.ConnectionString }
-        { name: 'COSMOS_ENDPOINT', value: databaseAccount.properties.documentEndpoint }
       ]
       cors: {
         #disable-next-line BCP329
@@ -427,33 +426,3 @@ resource flexAppToStorageAccount 'Microsoft.Authorization/roleAssignments@2022-0
   }
 }
 
-resource CosmosContributorRoleDefinition 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2024-11-15' = {
-  parent: databaseAccount
-  name: guid('contributor-role', databaseAccount.id)
-  properties: {
-    roleName: 'Cosmos Contributor Role'
-    type: 'CustomRole'
-    assignableScopes: [
-      databaseAccount.id
-    ]
-    permissions: [
-      {
-        dataActions: [
-          'Microsoft.DocumentDB/databaseAccounts/readMetadata'
-          'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*'
-          'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*'
-        ]
-      }
-    ]
-  }
-}
-
-resource flexAppToCosmos 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2024-11-15' = {
-  parent: databaseAccount
-  name: guid(flexFunctionApp.id, databaseAccount.id, 'Data Contributor')
-  properties: {
-    roleDefinitionId: CosmosContributorRoleDefinition.id
-    principalId: flexFunctionApp.identity.principalId
-    scope: databaseAccount.id
-  }
-}
