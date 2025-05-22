@@ -8,6 +8,11 @@ type LibraryBook struct {
 	Translator *string `json:"translator,omitempty"`
 }
 
+type LibraryGame struct {
+	Title   string `json:"title"`
+	Creator string `json:"creator"`
+}
+
 type LibraryItem struct {
 	Kind                  string       `json:"kind"`
 	Id                    string       `json:"id"`
@@ -15,6 +20,7 @@ type LibraryItem struct {
 	AddDate               time.Time    `json:"addDate"`
 	ActivatedChallengeIds []string     `json:"activatedChallengeIds"`
 	Book                  *LibraryBook `json:"book,omitempty"`
+	Game                  *LibraryGame `json:"game,omitempty"`
 	Favorite              bool         `json:"favorite"`
 }
 
