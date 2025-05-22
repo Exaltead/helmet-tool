@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"haasteikko/backend/shared"
@@ -31,7 +32,8 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if user.PasswordHash != getSha256Hash(loginRequest.Password) {
-		http.Error(w, "User not found", http.StatusUnauthorized)
+		log.Default().Println("User password is invalid")
+		http.Error(w, "User not found 2", http.StatusUnauthorized)
 		return
 	}
 
