@@ -10,29 +10,31 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime"
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 
-	//"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
 )
 
-func ConnectToCosmosContainer(containerName string) (*azcosmos.ContainerClient, error) {
-	connectionString := os.Getenv("COSMOS_CONNECTION_STRING")
-	databaseName := os.Getenv("DATABASE_NAME")
-	// At  lest in local env, using Entra as auth, puts flat 1.5s to each request duration
-	// Figure at some point how to use Entra auth withtout borking the site
-	/*
-
+func GetClient() (*azcosmos.Client, error) {
+	endpoint := os.Getenv("COSMOS_ENDPOINT")
+	if endpoint != "" {
 		cred, err := azidentity.NewDefaultAzureCredential(nil)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create a credential %v", err)
 		}
 
-		client, err := azcosmos.NewClient("https://haastest-db-56ltxqe2wkftk.documents.azure.com:443/", cred, nil)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create a client from connection string %v", err)
-		}*/
+		return azcosmos.NewClient("https://haastest-db-56ltxqe2wkftk.documents.azure.com:443/", cred, nil)
 
-	client, err := azcosmos.NewClientFromConnectionString(connectionString, nil)
+	}
+	connectionString := os.Getenv("COSMOS_CONNECTION_STRING")
+	return azcosmos.NewClientFromConnectionString(connectionString, nil)
+}
+
+func ConnectToCosmosContainer(containerName string) (*azcosmos.ContainerClient, error) {
+
+	databaseName := os.Getenv("DATABASE_NAME")
+
+	client, err := GetClient()
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a client from connection string %v", err)
