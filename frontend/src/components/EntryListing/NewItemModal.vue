@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Modal from '@/components/basics/PopupModal.vue';
-import type { Book } from '@/models/entry';
 import BrandedButton from '@/components/basics/BrandedButton.vue';
 import { computed, ref } from 'vue'
 import TextInput from "@/components/basics/TextInput.vue"
-import { addLibraryItem } from '@/api/libraryApi';
-
+import type { Book, Game, LibraryItem } from '@/models/LibraryItem';
+import { libraryApi } from '@/api/libraryApiClient';
+import BrandedSelect from '@/components/basics/BrandedSelect.vue';
 
 const { isModalOpen } = defineProps<{
   isModalOpen: boolean
@@ -22,42 +22,91 @@ type NewBook = {
   translator: string
 }
 
+type NewGame = {
+  title: string,
+  creator: string
+}
+
 const newBookBase: NewBook = {
   name: "",
   author: "",
   translator: ""
 }
 
-const model = ref<NewBook>({ ...newBookBase })
+const newGameBase: NewGame = {
+  title: "",
+  creator: ""
+}
+
+type ValidKinds = "Book" | "Game"
+
+const bookModel = ref<NewBook>({ ...newBookBase })
+const gameModel = ref<NewGame>({ ...newGameBase })
+const kind = ref<ValidKinds>("Book")
 
 const isSubmitting = ref(false)
 
 const isInvalidValid = computed(() => {
-  const hasName = model.value.name.length > 0
-  const hasAuthor = model.value.author.length > 0
+  if (kind.value === "Book") {
+    const hasName = bookModel.value.name.length > 0
+    const hasAuthor = bookModel.value.author.length > 0
 
-  return !(hasName && hasAuthor) || isSubmitting.value
+    return !(hasName && hasAuthor) || isSubmitting.value
+
+  } else if (kind.value === "Game") {
+    const hasTitle = gameModel.value.title.length > 0
+    const hasAuthor = gameModel.value.creator.length > 0
+    return !(hasTitle && hasAuthor) || isSubmitting.value
+  }
+
+  return true
+
 })
 
+function resetState() {
+  bookModel.value = { ...newBookBase }
+  gameModel.value = { ...newGameBase }
+}
 
 function closeModal(): void {
-  model.value = { ...newBookBase }
+  resetState()
   emit("close")
 }
 
 async function submitModal(): Promise<void> {
-  const newBook: Omit<Book, "id"> = {
-    kind: "Book",
-    name: model.value.name,
-    author: model.value.author,
-    translator: model.value.translator,
-    activatedChallengeIds: [],
-    favorite: false
+  function toItem(): Omit<LibraryItem, "id"> {
+    if (kind.value === 'Book') {
+      const newBook: Omit<Book, "id"> = {
+        kind: "Book",
+        title: bookModel.value.name,
+        author: bookModel.value.author,
+        translator: bookModel.value.translator,
+        activatedChallengeIds: [],
+        favorite: false
+      }
+      return newBook
+    }
+    if (kind.value === 'Game') {
+      const newGame: Omit<Game, "id"> = {
+        kind: 'Game',
+        title: gameModel.value.title,
+        creator: gameModel.value.creator,
+        activatedChallengeIds: [],
+        favorite: false
+      }
+
+      return newGame
+    }
+
+    throw new Error("Invalid state, kind unknown")
   }
 
 
+  const item = toItem()
+
+
   isSubmitting.value = true
-  const newId = await addLibraryItem(newBook)
+  const newId = await libraryApi.addLibraryItem(item)
   if (newId === undefined) {
 
     //TODO: show error to user
@@ -65,11 +114,14 @@ async function submitModal(): Promise<void> {
     return
   }
   isSubmitting.value = false
+  resetState()
   emit("submitComplete", newId)
-
-  model.value = { ...newBookBase }
 }
 
+const kinds = [
+  { name: "Kirja", value: "Book" },
+  { name: "Peli", value: "Game" },
+]
 
 </script>
 
@@ -77,9 +129,17 @@ async function submitModal(): Promise<void> {
   <Modal :show-modal="isModalOpen">
     <form>
       <div class="flex flex-col gap-4 p-4">
-        <TextInput name="name" label="Nimi" v-model="model.name" icon="Book" />
-        <TextInput name="author" label="Kirjailija" :required="true" v-model="model.author" icon="Author" />
-        <TextInput name="translator" label="Kääntäjä" :required="false" v-model="model.translator" icon="Translator" />
+        <BrandedSelect v-model="kind" :options="kinds" title="Tyyppi" />
+        <div v-if="kind === 'Book'">
+          <TextInput name="name" label="Nimi" v-model="bookModel.name" icon="Book" />
+          <TextInput name="author" label="Kirjailija" :required="true" v-model="bookModel.author" icon="Author" />
+          <TextInput name="translator" label="Kääntäjä" :required="false" v-model="bookModel.translator"
+            icon="Translator" />
+        </div>
+        <div v-if="kind === 'Game'">
+          <TextInput name="name" label="Nimi" v-model="gameModel.title" icon="Game" />
+          <TextInput name="author" label="Tekijä" :required="true" v-model="gameModel.creator" icon="Author" />
+        </div>
         <div class="flex flex-row justify-between py-2 gap-3">
           <BrandedButton :onClick="closeModal" text="Peru" icon="Cross" :styling="{
             isPill: true,

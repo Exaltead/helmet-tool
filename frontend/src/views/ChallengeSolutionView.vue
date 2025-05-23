@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 import { getChallengeAnswers } from '@/api/answerApi';
 import { fetchChallenges } from '@/api/challengeApi';
-import { fetchLibraryItems } from '@/api/libraryApi';
+import { libraryApi } from '@/api/libraryApiClient';
+
 import { solutionsApiClient } from '@/api/solutionsApiClient';
 import BrandedButton from '@/components/basics/BrandedButton.vue';
 import BrandedSelect from '@/components/basics/BrandedSelect.vue';
 import type { Answer, Question, Solution, SolutionSet } from '@/models/challenge';
-import type { Entry } from '@/models/entry';
+import type { LibraryItem } from '@/models/LibraryItem';
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
 
 
-const allItems = ref<Entry[]>([])
+const allItems = ref<LibraryItem[]>([])
 const questions = ref<Question[]>([])
 const allAnswers = ref<Answer[]>([])
 
@@ -68,7 +69,7 @@ async function loadData() {
   const challengeId = route.params.id as string
   // Loads library items
   const loadItems = async () => {
-    const items = await fetchLibraryItems()
+    const items = await libraryApi.fetchLibraryItems()
     // TODO: filter on server side
     items.filter((item) => {
       return item.activatedChallengeIds.includes(challengeId)
@@ -184,7 +185,7 @@ const questionToAnswersMap = computed(() => {
           return undefined
         }
         return {
-          name: item.name,
+          name: item.title,
           value: item.id
         }
       })

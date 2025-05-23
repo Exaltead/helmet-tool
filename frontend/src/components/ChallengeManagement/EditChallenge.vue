@@ -108,6 +108,7 @@ async function submit() {
           <label for="kind"> Haasteeseen soveltuvat: </label>
           <select name="kind" v-model="editTarget.targetMedia">
             <option value="Book">Kirja</option>
+            <option value="Game">Peli</option>
           </select>
         </div>
 

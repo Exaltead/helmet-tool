@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { fetchChallenges } from '@/api/challengeApi';
-import { fetchLibraryItem } from '@/api/libraryApi';
+import { libraryApi } from '@/api/libraryApiClient';;
 import EntryBasics from '@/components/Entry/EntryBasics.vue';
 import EntryChallenge from '@/components/Entry/EntryChallenge.vue';
 import IconBack from '@/components/icons/IconBack.vue';
 import type { Challenge } from '@/models/challenge';
-import type { Entry } from '@/models/entry';
+import type { LibraryItem } from '@/models/LibraryItem';
 import { TabGroup, TabList, TabPanel, TabPanels, Tab } from '@headlessui/vue';
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -20,14 +20,14 @@ function toLibrary() {
 }
 
 const challenges = ref<Challenge[]>([])
-const item = ref<Entry | undefined>(undefined)
+const item = ref<LibraryItem | undefined>(undefined)
 
 async function getChallenges() {
   challenges.value = await fetchChallenges()
 }
 async function getItem() {
   const itemId = z.string().parse(route.params.id)
-  const foundItem = await fetchLibraryItem(itemId)
+  const foundItem = await libraryApi.getLibraryItem(itemId)
   item.value = foundItem
 }
 

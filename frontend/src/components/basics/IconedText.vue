@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import IconAuthor from '@/components/icons/IconAuthor.vue';
-import IconTranslator from '@/components/icons/IconTranslator.vue';
-import IconBook from '@/components/icons/IconBook.vue';
+import type { IconName } from '@/models/iconName';
+import CustomIcon from './CustomIcon.vue';
 
-type IconName = "Book" | "Author" | "Translator"
 
 defineProps<{ text: string, iconName: IconName, heading: boolean }>();
 
@@ -12,9 +10,7 @@ defineProps<{ text: string, iconName: IconName, heading: boolean }>();
 <template>
 
   <div class="flex flex-row items-center justify-start gap-2">
-    <IconBook v-if="iconName === 'Book'" class="text-brand-orange" />
-    <IconAuthor v-else-if="iconName === 'Author'" class="text-brand-orange" />
-    <IconTranslator v-else-if="iconName === 'Translator'" class="text-brand-orange" />
+    <CustomIcon :name="iconName" class="text-brand-primary"/>
     <div v-if="heading" class="text-brand-rock text-lg font-bold wrap-anywhere">
       {{ text }}
     </div>

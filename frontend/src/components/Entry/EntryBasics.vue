@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { Entry } from '@/models/entry';
+import type { LibraryItem } from '@/models/LibraryItem';
 import { computed, ref } from 'vue';
 import Button from "@/components/basics/BrandedButton.vue"
 import TextInput from "@/components/basics/TextInput.vue"
-import { updateLibraryItem, deleteLibraryItem } from '@/api/libraryApi';
+import { libraryApi } from '@/api/libraryApiClient';
 import type { Challenge } from '@/models/challenge';
 import ManagementList from '../basics/ManagementList.vue';
 
 
 
 const { item, challenges } = defineProps<{
-  item: Entry
+  item: LibraryItem
   challenges: Challenge[]
 }>()
 
@@ -21,7 +21,7 @@ const emit = defineEmits<{
 }>()
 
 
-const modifyTarget = ref<Entry | undefined>(undefined)
+const modifyTarget = ref<LibraryItem | undefined>(undefined)
 
 const inEditMode = ref(false)
 
@@ -44,7 +44,7 @@ async function submit() {
   }
 
   isSubmitting.value = true
-  await updateLibraryItem(modifyTarget.value)
+  await libraryApi.updateLibraryItem(modifyTarget.value)
   isSubmitting.value = false
   inEditMode.value = false
   modifyTarget.value = undefined
@@ -56,7 +56,7 @@ async function submit() {
 const isDeleting = ref(false)
 async function deleteItem() {
   isDeleting.value = true
-  await deleteLibraryItem(item.id)
+  await libraryApi.deleteItem(item.id)
   isDeleting.value = false
   emit("objectDeleted")
   emit("editModeChanged", false)
@@ -76,7 +76,7 @@ const activatedChallengeList = computed(() => {
 })
 
 const allChallenges = computed(() => {
-  return challenges.map((challenge) => {
+  return challenges.filter(t => t.targetMedia === item.kind).map((challenge) => {
     return {
       value: challenge.id,
       display: challenge.name
@@ -96,10 +96,14 @@ function onChallengeStateChanged(challengeIds: string[]) {
   <div>
     <div v-if="inEditMode" class="flex flex-col gap-2">
       <div class="flex flex-row items-center justify-between">
-        <div class="flex flex-col gap-1">
-          <TextInput name="name" label="Nimi" :required=true v-model="modifyTarget!.name" />
+        <div class="flex flex-col gap-1" v-if="modifyTarget?.kind === 'Book'">
+          <TextInput name="name" label="Nimi" :required=true v-model="modifyTarget!.title" />
           <TextInput name="author" label="Kirjailija" :required=true v-model="modifyTarget!.author" />
           <TextInput name="translator" label="Kääntäjä" :required=false v-model="modifyTarget!.translator" />
+        </div>
+        <div class="flex flex-col gap-1" v-if="modifyTarget?.kind === 'Game'">
+          <TextInput name="name" label="Nimi" :required=true v-model="modifyTarget!.title" />
+          <TextInput name="author" label="Tekijä(t)" :required=true v-model="modifyTarget!.creator" />
         </div>
 
       </div>
@@ -116,10 +120,14 @@ function onChallengeStateChanged(challengeIds: string[]) {
     </div>
     <div v-else>
       <div class="flex flex-row items-start justify-between">
-        <div class="flex flex-col gap-1" v-if="item">
-          <p>Nimi: {{ item.name }}</p>
+        <div class="flex flex-col gap-1" v-if="item.kind === 'Book'">
+          <p>Nimi: {{ item.title }}</p>
           <p>Kirjailija: {{ item.author }}</p>
           <p>Kääntäjä: {{ item.translator }}</p>
+        </div>
+        <div class="flex flex-col gap-1" v-if="item.kind === 'Game'">
+          <p>Nimi: {{ item.title }}</p>
+          <p>Kirjailija: {{ item.creator }}</p>
         </div>
         <div class="flex flex-row gap-2 align-top justify-start">
           <Button :onClick="enableEditMode" text="Muokkaa" :isSubmitting="isSubmitting"></Button>
