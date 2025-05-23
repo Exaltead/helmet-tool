@@ -17,7 +17,8 @@ function createEditTarget(target: Challenge | undefined): Challenge {
       name: "",
       questions: [],
       status: "active",
-      targetMedia: "Book"
+      targetMedia: "Book",
+      kind: "shared"
     }
   } else {
     return {

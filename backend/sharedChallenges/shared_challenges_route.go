@@ -21,6 +21,12 @@ func validateItem(item SharedChallenge) error {
 	if item.Questions == nil {
 		return fmt.Errorf("questions must not be nil")
 	}
+
+	if item.Kind != KindShared {
+		return fmt.Errorf("kind must be set to shared")
+	}
+
+
 	// TODO: Add more validation logic as needed
 	return nil
 }
@@ -32,5 +38,7 @@ func createNewFromParsedItem(item SharedChallenge, userId string) (SharedChallen
 	}
 
 	item.Id = uuid.NewString()
+	item.Kind = KindShared
+
 	return item, nil
 }

@@ -182,7 +182,7 @@ resource challengesCosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDat
       }
       partitionKey: {
         paths: [
-          '/id'
+          '/kind'
         ]
         kind: 'Hash'
         version: 2
@@ -270,13 +270,6 @@ resource hostingStorageAccountBlobService 'Microsoft.Storage/storageAccounts/blo
   name: 'default'
 }
 
-resource backendContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' = {
-  parent: hostingStorageAccountBlobService
-  name: 'backend'
-  properties: {
-    publicAccess: 'None'
-  }
-}
 
 resource flexBackendContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2024-01-01' = {
   parent: hostingStorageAccountBlobService

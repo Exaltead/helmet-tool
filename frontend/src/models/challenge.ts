@@ -30,6 +30,7 @@ export const challengeSchema = z.object({
   status: z.enum(["active", "inactive"]),
   targetMedia: z.enum(["Book", "Game"]),
   questions: questionSchema.array(),
+  kind: z.string()
 })
 export type Challenge = z.infer<typeof challengeSchema>
 

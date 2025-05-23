@@ -22,7 +22,7 @@ async function updateItemFavorite(): Promise<void> {
   newItem.favorite = !props.item.favorite
 
 
-  await libraryApi.addLibraryItem(newItem)
+  await libraryApi.updateLibraryItem(newItem)
   emit("itemUpdated")
 }
 

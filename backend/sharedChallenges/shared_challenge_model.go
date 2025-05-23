@@ -1,5 +1,9 @@
 package sharedchallenges
 
+const (
+	KindShared string = "shared"
+)
+
 type Question struct {
 	Kind                string `json:"kind"`
 	Question            string `json:"question"`
@@ -9,12 +13,12 @@ type Question struct {
 }
 
 type SharedChallenge struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	Status      string `json:"status"`
-	TargetMedia string `json:"targetMedia"`
+	Id          string     `json:"id"`
+	Name        string     `json:"name"`
+	Status      string     `json:"status"`
+	TargetMedia string     `json:"targetMedia"`
 	Questions   []Question `json:"questions"`
-	// Add other fields as needed
+	Kind        string     `json:"kind"`
 }
 
 func (s SharedChallenge) GetId() string {
