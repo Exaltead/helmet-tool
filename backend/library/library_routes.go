@@ -23,13 +23,20 @@ func validateItem(item LibraryItem) error {
 	if item.ActivatedChallengeIds == nil {
 		return fmt.Errorf("activatedChallengeIds must not be nil")
 	}
-	if item.Kind != "Book" {
-		return fmt.Errorf("kind must be Book")
+
+	switch item.Kind {
+	case "Book":
+		if item.Book == nil {
+			return fmt.Errorf("book must not be nil")
+		}
+	case "Game":
+		if item.Game == nil {
+			return fmt.Errorf("game must not be nil")
+		}
+	default:
+		return fmt.Errorf("item must have valid kind")
 	}
 
-	if item.Kind == "Book" && item.Book == nil {
-		return fmt.Errorf("book must not be nil")
-	}
 	return nil
 }
 

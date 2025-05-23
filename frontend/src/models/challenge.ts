@@ -28,7 +28,7 @@ export const challengeSchema = z.object({
   id: z.string(),
   name: z.string(),
   status: z.enum(["active", "inactive"]),
-  targetMedia: z.enum(["Book"]),
+  targetMedia: z.enum(["Book", "Game"]),
   questions: questionSchema.array(),
 })
 export type Challenge = z.infer<typeof challengeSchema>

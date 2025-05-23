@@ -75,4 +75,19 @@ export abstract class BaseApiClient<
     const data = await resp.json()
     return this.schema.array().parse(data)
   }
+
+  protected async fetchEntity(id: string): Promise<z.infer<T> | undefined>{
+    const resp = await fetch(`${this.baseUrl}/${id}`, {
+      method: "GET",
+      headers: this.getHeaders()
+    })
+
+    if(!resp.ok){
+      return undefined
+    }
+
+    const data = await resp.json()
+
+    return this.schema.optional().parse(data)
+  }
 }

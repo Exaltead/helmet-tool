@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 
 import { computed, ref } from "vue"
-import type { Entry } from "@/models/entry"
-import { fetchLibraryItems } from "@/api/libraryApi"
+import type { LibraryItem } from "@/models/LibraryItem"
+import { libraryApi } from '@/api/libraryApiClient';
 import LibraryItemCard from "./LibraryItemCard.vue"
 
-const items = ref<Entry[]>([])
+const items = ref<LibraryItem[]>([])
 
 const listItems = computed(() => items.value)
 
 async function getItems() {
-  const serverItems = await fetchLibraryItems()
+  const serverItems = await libraryApi.fetchLibraryItems()
 
   items.value = serverItems
 }
