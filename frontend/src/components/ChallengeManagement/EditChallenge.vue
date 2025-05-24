@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Challenge, Question } from '@/models/challenge';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import TextInput from '../basics/TextInput.vue';
 import { v4 } from 'uuid';
 import IconPlus from "@/components/icons/IconPlus.vue"
@@ -92,6 +92,10 @@ async function submit() {
   emit("submitComplete")
 }
 
+const canSubmit = computed(() => {
+  return isSubmitting && editTarget.value.name.length > 0 && editTarget.value.questions.length > 0
+})
+
 </script>
 
 <template>
@@ -103,7 +107,8 @@ async function submit() {
       <div class="flex flex-col gap-4">
         <div class="flex flex-row gap-4 justify-between items-center">
           <TextInput class="basis-4/5" v-model="editTarget.name" name="Nimi" label="Haasteen nimi" />
-          <BrandedButton text="Tallenna" :onClick="submit" class="h-fit" :isSubmitting="isSubmitting" />
+          <BrandedButton text="Tallenna" :onClick="submit" class="h-fit" :isSubmitting="isSubmitting"
+            :disabled="!canSubmit" />
         </div>
         <div class="flex flex-row gap-4">
           <label for="kind"> Haasteeseen soveltuvat: </label>
